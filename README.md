@@ -1,6 +1,6 @@
 # LabFlow Backend
 
-A Spring Boot 3.2.x REST API backend for the LabFlow application with comprehensive laboratory management features.
+A Spring Boot 3.5.x REST API backend for the LabFlow application with comprehensive laboratory management features.
 
 ## Table of Contents
 
@@ -18,7 +18,7 @@ A Spring Boot 3.2.x REST API backend for the LabFlow application with comprehens
 
 Before running this application, make sure you have the following installed:
 
-- **Java 17** or higher
+- **Java 21** or higher
 - **Maven 3.6+**
 - **PostgreSQL 12+**
 - **Git**
@@ -26,15 +26,15 @@ Before running this application, make sure you have the following installed:
 ### Key Dependencies
 
 This project uses the following main dependencies:
-- **Spring Boot 3.2.10** - Main framework
+- **Spring Boot 3.5.0** - Main framework
 - **Spring Data JPA** - Database persistence layer
 - **PostgreSQL Driver** - Database connectivity
 - **Spring Security** - Authentication and authorization
-- **SpringDoc OpenAPI 2.2.0** - API documentation (Swagger UI)
+- **SpringDoc OpenAPI 2.6.0** - API documentation (Swagger UI)
 
 ### Java Installation
 
-1. Download and install Java 17 from [Oracle](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or [OpenJDK](https://openjdk.org/projects/jdk/17/)
+1. Download and install Java 21 from [Oracle](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) or [OpenJDK](https://openjdk.org/projects/jdk/21/)
 2. Verify installation:
    ```bash
    java -version
@@ -308,7 +308,7 @@ This Spring Boot application follows a layered architecture:
    - Kill process using the port: `lsof -ti:8080 | xargs kill -9`
 
 3. **Maven Build Fails:**
-   - Ensure Java 17 is installed and set as JAVA_HOME
+   - Ensure Java 21 is installed and set as JAVA_HOME
    - Run `mvn clean` before `mvn install`
 
 ### Logs
