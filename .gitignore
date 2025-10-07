@@ -1,8 +1,12 @@
+# LabFlow Backend - Java/Spring Boot Project
+
 # Compiled class file
 *.class
 
 # Log files
 *.log
+logs/
+application-*.log
 
 # BlueJ files
 *.ctxt
@@ -102,14 +106,23 @@ Desktop.ini
 # Database
 *.db
 *.sqlite
+postgresql/
+
+# PostgreSQL specific
+pg_data/
+*.sql.backup
 
 # Test coverage
 coverage/
 *.lcov
+jacoco/
 
-# Application logs
-logs/
-application-*.log
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
 
 # Docker
 Dockerfile.local
@@ -124,3 +137,9 @@ docker-compose.override.yml
 # Backup files
 *.bak
 *.backup
+
+# Spring Boot specific
+/HELP.md
+/.mvn/
+/mvnw
+/mvnw.cmd

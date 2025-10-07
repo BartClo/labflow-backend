@@ -19,11 +19,11 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("LabFlow Backend API")
                         .version("1.0.0")
-                        .description("API REST para el sistema LabFlow - Gestión de clientes y laboratorios")
+                        .description("API REST para el sistema LabFlow - Gestión completa de clientes, análisis y plantillas de laboratorio")
                         .contact(new Contact()
                                 .name("Equipo LabFlow")
                                 .email("support@labflow.com")
-                                .url("https://github.com/BartClo/labflow-backend"))
+                                .url("https://github.com/labflow/labflow-backend"))
                         .license(new License()
                                 .name("MIT License")
                                 .url("https://opensource.org/licenses/MIT")));
