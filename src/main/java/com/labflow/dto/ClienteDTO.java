@@ -22,20 +22,20 @@ public class ClienteDTO {
     private String nombreCliente;
 
     @Schema(description = "Fecha de creación del registro", example = "2025-10-07T14:30:00")
-    private LocalDateTime createdAt;
+    private LocalDateTime fechaCreacion;
 
     @Schema(description = "Fecha de última actualización", example = "2025-10-07T14:30:00")
-    private LocalDateTime updatedAt;
+    private LocalDateTime fechaActualizacion;
 
     // Constructor por defecto
     public ClienteDTO() {}
 
     // Constructor con parámetros
-    public ClienteDTO(UUID idCliente, String nombreCliente, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ClienteDTO(UUID idCliente, String nombreCliente, LocalDateTime fechaCreacion, LocalDateTime fechaActualizacion) {
         this.idCliente = idCliente;
         this.nombreCliente = nombreCliente;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.fechaCreacion = fechaCreacion;
+        this.fechaActualizacion = fechaActualizacion;
     }
 
     // Getters y Setters
@@ -55,19 +55,19 @@ public class ClienteDTO {
         this.nombreCliente = nombreCliente;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public LocalDateTime getFechaActualizacion() {
+        return fechaActualizacion;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
     }
 }
