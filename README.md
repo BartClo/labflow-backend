@@ -52,10 +52,37 @@ This project uses the following main dependencies:
 ### PostgreSQL Installation
 
 1. Download and install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/)
-2. Create a database for the application:
-   ```sql
-   CREATE DATABASE labflow;
-   ```
+2. During installation, remember the password for the `postgres` user
+3. Ensure PostgreSQL service is running
+4. Create the database for the application:
+
+#### Option 1: Using pgAdmin (Graphical Interface)
+1. Open pgAdmin
+2. Connect to your PostgreSQL server
+3. Right-click on "Databases" → "Create" → "Database"
+4. Name: `labflow_db`
+5. Click "Save"
+
+#### Option 2: Using Command Line
+```bash
+# Connect to PostgreSQL
+psql -U postgres -h localhost
+
+# Create the database
+CREATE DATABASE labflow_db;
+
+# Exit
+\q
+```
+
+#### Option 3: Using Provided Script
+```bash
+# Navigate to project directory
+cd labflow-backend
+
+# Execute the setup script
+psql -U postgres -h localhost -f setup_labflow_db.sql
+```
 
 ## Installation
 
@@ -98,14 +125,27 @@ The application uses the following environment variables (configure in `.env` fi
 
 ### Database Setup
 
-1. **Create the database:**
-   ```sql
-   CREATE DATABASE labflow;
+1. **Create the database using one of the methods above**
+
+2. **Update your `.env` file** with the correct database credentials:
+   ```bash
+   DB_URL=jdbc:postgresql://localhost:5432/labflow_db
+   DB_USERNAME=postgres
+   DB_PASSWORD=your_postgres_password
    ```
 
-2. **Update your `.env` file** with the correct database credentials.
+3. **Verify database connection:**
+   ```bash
+   psql -U postgres -d labflow_db -h localhost
+   ```
 
-3. **The application will automatically create tables** on first run (using Hibernate DDL auto-update).
+4. **The application will automatically create tables** on first run (using Hibernate DDL auto-update).
+
+#### Database Configuration Files
+
+The project includes database setup scripts:
+- `setup_labflow_db.sql` - Complete setup with user creation
+- `setup_simple.sql` - Simplified database creation only
 
 ## Running the Application
 
@@ -299,17 +339,23 @@ This Spring Boot application follows a layered architecture:
 ### Common Issues
 
 1. **Database Connection Error:**
-   - Check if PostgreSQL is running
+   - Check if PostgreSQL is running: `sudo systemctl status postgresql` (Linux) or check Services (Windows)
    - Verify database credentials in `.env` file
-   - Ensure database exists
+   - Ensure database `labflow_db` exists
+   - Test connection: `psql -U postgres -d labflow_db -h localhost`
 
 2. **Port Already in Use:**
    - Change `SERVER_PORT` in `.env` file
-   - Kill process using the port: `lsof -ti:8080 | xargs kill -9`
+   - Kill process using the port: `lsof -ti:8080 | xargs kill -9` (Linux/Mac) or `netstat -ano | findstr :8080` (Windows)
 
 3. **Maven Build Fails:**
    - Ensure Java 21 is installed and set as JAVA_HOME
    - Run `mvn clean` before `mvn install`
+
+4. **PostgreSQL Authentication Failed:**
+   - Verify username and password in `.env` file
+   - Check PostgreSQL `pg_hba.conf` configuration
+   - Ensure PostgreSQL allows local connections
 
 ### Logs
 
