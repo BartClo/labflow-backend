@@ -1,0 +1,51 @@
+# ================================================
+# CONFIGURACIONES DE BASE DE DATOS PARA LABFLOW
+# ================================================
+# Elige una de estas configuraciones según tu instalación de PostgreSQL
+
+# OPCIÓN 1: Usuario postgres con contraseña personalizada
+# DB_URL=jdbc:postgresql://localhost:5432/labflow_db
+# DB_USERNAME=postgres
+# DB_PASSWORD=tu_password_aqui
+
+# OPCIÓN 2: Usuario postgres sin contraseña (algunos casos)
+# DB_URL=jdbc:postgresql://localhost:5432/labflow_db
+# DB_USERNAME=postgres
+# DB_PASSWORD=
+
+# OPCIÓN 3: Usuario dedicado (usando script setup_labflow_db.sql)
+# DB_URL=jdbc:postgresql://localhost:5432/labflow_db
+# DB_USERNAME=labflow_user
+# DB_PASSWORD=labflow_password_2024
+
+# OPCIÓN 4: Puerto personalizado de PostgreSQL
+# DB_URL=jdbc:postgresql://localhost:5433/labflow_db
+# DB_USERNAME=postgres
+# DB_PASSWORD=tu_password_aqui
+
+# ================================================
+# PASOS PARA CONFIGURAR:
+# ================================================
+# 1. Identifica tu contraseña de PostgreSQL
+# 2. Copia una de las configuraciones de arriba
+# 3. Reemplaza en tu archivo .env
+# 4. Reinicia la aplicación
+
+# ================================================
+# COMANDOS PARA PROBAR CONEXIÓN:
+# ================================================
+# psql -U postgres -h localhost -d labflow_db
+# (Debería pedir contraseña y conectar)
+
+# ================================================
+# SI NO RECUERDAS TU CONTRASEÑA:
+# ================================================
+# En Windows, puedes resetear la contraseña:
+# 1. Buscar "Services" en el menú inicio
+# 2. Detener el servicio "postgresql-x64-xx"
+# 3. Editar pg_hba.conf (cambiar 'md5' por 'trust')
+# 4. Reiniciar servicio PostgreSQL
+# 5. Conectar sin contraseña: psql -U postgres
+# 6. Cambiar contraseña: ALTER USER postgres PASSWORD 'nueva_password';
+# 7. Revertir pg_hba.conf (cambiar 'trust' por 'md5')
+# 8. Reiniciar servicio nuevamente
