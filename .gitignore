@@ -7,6 +7,7 @@
 *.log
 logs/
 application-*.log
+spring.log
 
 # BlueJ files
 *.ctxt
@@ -48,6 +49,7 @@ build/
 
 # Spring Boot
 .spring-boot-devtools.properties
+spring-boot-*.log
 
 # Environment variables
 .env
@@ -143,3 +145,15 @@ docker-compose.override.yml
 /.mvn/
 /mvnw
 /mvnw.cmd
+
+# Application specific
+database-config-options.txt
+setup_labflow_db.sql
+
+# Development files
+application-dev.properties
+application-local.properties
+
+# Testing
+*.h2.db
+test-output/

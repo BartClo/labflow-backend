@@ -14,7 +14,15 @@
     <artifactId>labflow-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>labflow-backend</name>
-    <description>LabFlow Backend API</description>
+    <description>LabFlow Backend - Sistema completo de gestión de laboratorio con Spring Boot</description>
+    <url>https://github.com/BartClo/labflow-backend</url>
+    
+    <developers>
+        <developer>
+            <name>LabFlow Team</name>
+            <organization>LabFlow</organization>
+        </developer>
+    </developers>
     
     <properties>
         <java.version>21</java.version>
@@ -71,6 +79,12 @@
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
         
+        <!-- Spring Boot Actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        
         <!-- Spring Boot DevTools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -96,9 +110,48 @@
     
     <build>
         <plugins>
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-devtools</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            
+            <!-- Maven Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            
+            <!-- Flyway Maven Plugin -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>11.1.0</version>
+                <configuration>
+                    <url>jdbc:postgresql://localhost:5432/labflow_db</url>
+                    <user>labflow_user</user>
+                    <password>labflow_password</password>
+                    <locations>
+                        <location>classpath:db/migration</location>
+                    </locations>
+                </configuration>
             </plugin>
         </plugins>
     </build>
