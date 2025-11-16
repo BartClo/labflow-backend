@@ -51,7 +51,7 @@ public class UsuarioService {
         usuario.setApellido(dto.getApellido());
         usuario.setEmail(dto.getEmail());
         usuario.setUsername(dto.getUsername());
-        usuario.setPassword(dto.getPassword()); // TODO: En producción, encriptar con BCrypt
+        usuario.setPassword(dto.getPassword()); // NOTA: Implementar encriptación BCrypt en fase de autenticación
         usuario.setTelefono(dto.getTelefono());
         usuario.setDireccion(dto.getDireccion());
         usuario.setFechaNacimiento(dto.getFechaNacimiento());
@@ -182,7 +182,7 @@ public class UsuarioService {
         usuario.setEmail(dto.getEmail());
         usuario.setUsername(dto.getUsername());
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
-            usuario.setPassword(dto.getPassword()); // TODO: Encriptar
+            usuario.setPassword(dto.getPassword()); // NOTA: Implementar encriptación BCrypt en fase de autenticación
         }
         usuario.setTelefono(dto.getTelefono());
         usuario.setDireccion(dto.getDireccion());
