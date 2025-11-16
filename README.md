@@ -19,14 +19,18 @@ Sistema de gestión de laboratorio desarrollado con Spring Boot que maneja clien
 - **Análisis** - Catálogo de tipos de análisis con categorías y configuración JSONB
 - **Plantillas** - Plantillas de procedimientos que agrupan múltiples análisis
 - **Muestras** - Muestras con estados y relaciones complejas
+- **Usuarios** - Gestión de usuarios del sistema con autenticación y control de acceso
+- **Roles** - Roles del sistema con permisos granulares (Administrador, Trabajador)
 
 ### Características del Sistema
 - Relaciones Many-to-Many entre muestras, análisis y plantillas
 - Sistema de estados granulares para control de flujos de trabajo
-- API REST completa con más de 50 endpoints documentados
+- API REST completa con más de 70 endpoints documentados
 - Búsquedas avanzadas con filtros múltiples
 - Estadísticas del sistema y cola de trabajo
 - Monitoreo con health checks y métricas
+- Sistema de autenticación y control de acceso basado en roles
+- Gestión de permisos granulares por rol
 
 ## Tutorial: Ejecutar el Código desde Cero
 
@@ -181,6 +185,8 @@ chmod +x mvnw
 - `analisis` - Catálogo de análisis con categorías y configuración JSONB
 - `plantillas` - Plantillas de procedimientos con múltiples análisis
 - `muestras` - Muestras de laboratorio con estados y metadatos
+- `roles` - Roles del sistema con permisos (ADMINISTRADOR, TRABAJADOR)
+- `usuarios` - Usuarios del sistema con autenticación y datos personales
 
 ### Tablas de Relación
 - `plantilla_analisis` - Relación M:N entre plantillas y análisis
@@ -192,6 +198,7 @@ chmod +x mvnw
 - V2: Tabla analisis con JSONB y arrays PostgreSQL
 - V3: Tablas plantillas y plantilla_analisis con relaciones M:N
 - V4: Tablas muestras, muestra_analisis y muestra_plantilla con estados avanzados
+- V5: Tablas usuarios y roles con autenticación y control de acceso
 
 ## API REST
 
@@ -250,6 +257,34 @@ chmod +x mvnw
 - `GET /actuator/health` - Estado de salud
 - `GET /actuator/metrics` - Métricas del sistema
 
+#### Roles
+- `GET /api/roles` - Listar todos los roles
+- `GET /api/roles/activos` - Listar roles activos
+- `POST /api/roles` - Crear nuevo rol
+- `GET /api/roles/{id}` - Obtener rol por ID
+- `GET /api/roles/nombre/{nombre}` - Obtener rol por nombre
+- `PUT /api/roles/{id}` - Actualizar rol
+- `PATCH /api/roles/{id}/estado` - Cambiar estado de rol
+- `DELETE /api/roles/{id}` - Eliminar rol
+- `GET /api/roles/buscar` - Buscar roles por texto
+
+#### Usuarios
+- `GET /api/usuarios` - Listar usuarios (con paginación opcional)
+- `GET /api/usuarios/activos` - Listar usuarios activos
+- `POST /api/usuarios` - Crear nuevo usuario
+- `GET /api/usuarios/{id}` - Obtener usuario por ID
+- `GET /api/usuarios/email/{email}` - Obtener usuario por email
+- `GET /api/usuarios/username/{username}` - Obtener usuario por username
+- `GET /api/usuarios/rol/{rolId}` - Listar usuarios por rol
+- `GET /api/usuarios/administradores` - Listar administradores
+- `GET /api/usuarios/trabajadores` - Listar trabajadores
+- `PUT /api/usuarios/{id}` - Actualizar usuario
+- `PATCH /api/usuarios/{id}/estado` - Cambiar estado de usuario
+- `POST /api/usuarios/{id}/registrar-conexion` - Registrar conexión
+- `DELETE /api/usuarios/{id}` - Eliminar usuario
+- `GET /api/usuarios/buscar` - Buscar usuarios por texto
+- `GET /api/usuarios/estadisticas` - Estadísticas de usuarios
+
 ## Estructura del Proyecto
 
 ```
@@ -261,10 +296,16 @@ src/main/java/com/labflow/
 │   ├── AnalisisController.java
 │   ├── ClienteController.java
 │   ├── MuestraController.java
-│   └── PlantillaController.java
+│   ├── PlantillaController.java
+│   ├── RolController.java
+│   └── UsuarioController.java
 ├── dto/
 │   ├── MuestraCreateDTO.java
-│   └── MuestraDTO.java
+│   ├── MuestraDTO.java
+│   ├── RolCreateDTO.java
+│   ├── RolDTO.java
+│   ├── UsuarioCreateDTO.java
+│   └── UsuarioDTO.java
 ├── exception/
 ├── model/
 │   ├── Analisis.java
@@ -273,9 +314,15 @@ src/main/java/com/labflow/
 │   ├── MuestraAnalisis.java
 │   ├── MuestraPlantilla.java
 │   ├── Plantilla.java
-│   └── PlantillaAnalisis.java
+│   ├── PlantillaAnalisis.java
+│   ├── Rol.java
+│   └── Usuario.java
 ├── repository/
+│   ├── RolRepository.java
+│   └── UsuarioRepository.java
 ├── service/
+│   ├── RolService.java
+│   └── UsuarioService.java
 └── util/
 
 src/main/resources/
@@ -284,7 +331,8 @@ src/main/resources/
     ├── V1__Create_clientes_table.sql
     ├── V2__Create_analisis_table.sql
     ├── V3__Create_plantillas_table.sql
-    └── V4__Create_muestras_table.sql
+    ├── V4__Create_muestras_table.sql
+    └── V5__Create_usuarios_roles_tables.sql
 ```
 
 ## Comandos de Desarrollo
