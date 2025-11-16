@@ -11,13 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RolService {
 
     private final RolRepository rolRepository;
+    
+    private static final String ROL_NO_ENCONTRADO = "Rol no encontrado con ID: ";
 
     /**
      * Crear nuevo rol
@@ -33,7 +34,7 @@ public class RolService {
         rol.setNombre(dto.getNombre());
         rol.setDescripcion(dto.getDescripcion());
         rol.setPermisos(dto.getPermisos());
-        rol.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
+        rol.setActivo(dto.getActivo() != null ? dto.getActivo() : Boolean.TRUE);
 
         Rol rolGuardado = rolRepository.save(rol);
         return convertirADTO(rolGuardado);
@@ -45,7 +46,7 @@ public class RolService {
     @Transactional(readOnly = true)
     public RolDTO obtenerPorId(UUID id) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(ROL_NO_ENCONTRADO + id));
         return convertirADTO(rol);
     }
 
@@ -66,7 +67,7 @@ public class RolService {
     public List<RolDTO> listarTodos() {
         return rolRepository.findAll().stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -76,7 +77,7 @@ public class RolService {
     public List<RolDTO> listarActivos() {
         return rolRepository.findByActivoTrue().stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -85,7 +86,7 @@ public class RolService {
     @Transactional
     public RolDTO actualizarRol(UUID id, RolCreateDTO dto) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(ROL_NO_ENCONTRADO + id));
 
         // Verificar si se está cambiando el nombre y si ya existe
         if (!rol.getNombre().equals(dto.getNombre()) && rolRepository.existsByNombre(dto.getNombre())) {
@@ -109,10 +110,10 @@ public class RolService {
     @Transactional
     public RolDTO cambiarEstado(UUID id, Boolean activo) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(ROL_NO_ENCONTRADO + id));
 
         // Validar que no se desactive un rol crítico si tiene usuarios
-        if (!activo && ("ADMINISTRADOR".equals(rol.getNombre()) || "TRABAJADOR".equals(rol.getNombre()))) {
+        if (Boolean.FALSE.equals(activo) && ("ADMINISTRADOR".equals(rol.getNombre()) || "TRABAJADOR".equals(rol.getNombre()))) {
             long cantidadUsuarios = rolRepository.contarUsuariosPorRol(id);
             if (cantidadUsuarios > 0) {
                 throw new IllegalStateException("No se puede desactivar el rol " + rol.getNombre() + 
@@ -131,7 +132,7 @@ public class RolService {
     @Transactional
     public void eliminarRol(UUID id) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(ROL_NO_ENCONTRADO + id));
 
         // No permitir eliminar roles del sistema
         if ("ADMINISTRADOR".equals(rol.getNombre()) || "TRABAJADOR".equals(rol.getNombre())) {
@@ -155,7 +156,7 @@ public class RolService {
     public List<RolDTO> buscarPorTexto(String texto) {
         return rolRepository.buscarPorNombre(texto).stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

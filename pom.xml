@@ -85,6 +85,13 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
         <!-- Spring Boot DevTools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -117,8 +124,8 @@
                 <configuration>
                     <excludes>
                         <exclude>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-devtools</artifactId>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
                 </configuration>

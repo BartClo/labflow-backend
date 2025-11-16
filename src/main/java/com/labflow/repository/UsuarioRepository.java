@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -61,7 +62,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     /**
      * Buscar usuarios con paginación
      */
-    Page<Usuario> findAll(Pageable pageable);
+    @NonNull
+    Page<Usuario> findAll(@NonNull Pageable pageable);
 
     /**
      * Buscar usuarios activos con paginación

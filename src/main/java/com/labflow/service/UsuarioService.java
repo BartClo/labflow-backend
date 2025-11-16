@@ -14,15 +14,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
 
+    private static final String USUARIO_NO_ENCONTRADO = "Usuario no encontrado con ID: ";
+    
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
 
@@ -56,7 +56,7 @@ public class UsuarioService {
         usuario.setDireccion(dto.getDireccion());
         usuario.setFechaNacimiento(dto.getFechaNacimiento());
         usuario.setRol(rol);
-        usuario.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
+        usuario.setActivo(dto.getActivo() != null ? dto.getActivo() : Boolean.TRUE);
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         return convertirADTO(usuarioGuardado);
@@ -68,7 +68,7 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public UsuarioDTO obtenerPorId(UUID id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(USUARIO_NO_ENCONTRADO + id));
         return convertirADTO(usuario);
     }
 
@@ -99,7 +99,7 @@ public class UsuarioService {
     public List<UsuarioDTO> listarTodos() {
         return usuarioRepository.findAll().stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -118,7 +118,7 @@ public class UsuarioService {
     public List<UsuarioDTO> listarActivos() {
         return usuarioRepository.findByActivoTrue().stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -128,7 +128,7 @@ public class UsuarioService {
     public List<UsuarioDTO> listarPorRol(UUID rolId) {
         return usuarioRepository.findByRolId(rolId).stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -138,7 +138,7 @@ public class UsuarioService {
     public List<UsuarioDTO> listarAdministradores() {
         return usuarioRepository.findAdministradores().stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -148,7 +148,7 @@ public class UsuarioService {
     public List<UsuarioDTO> listarTrabajadores() {
         return usuarioRepository.findTrabajadores().stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -157,7 +157,7 @@ public class UsuarioService {
     @Transactional
     public UsuarioDTO actualizarUsuario(UUID id, UsuarioCreateDTO dto) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(USUARIO_NO_ENCONTRADO + id));
 
         // Validar email si cambió
         if (!usuario.getEmail().equals(dto.getEmail()) && usuarioRepository.existsByEmail(dto.getEmail())) {
@@ -201,7 +201,7 @@ public class UsuarioService {
     @Transactional
     public UsuarioDTO cambiarEstado(UUID id, Boolean activo) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(USUARIO_NO_ENCONTRADO + id));
 
         usuario.setActivo(activo);
         Usuario usuarioActualizado = usuarioRepository.save(usuario);
@@ -214,7 +214,7 @@ public class UsuarioService {
     @Transactional
     public UsuarioDTO registrarConexion(UUID id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(USUARIO_NO_ENCONTRADO + id));
 
         usuario.registrarConexion();
         Usuario usuarioActualizado = usuarioRepository.save(usuario);
@@ -227,7 +227,7 @@ public class UsuarioService {
     @Transactional
     public void eliminarUsuario(UUID id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(USUARIO_NO_ENCONTRADO + id));
 
         usuarioRepository.delete(usuario);
     }
@@ -239,7 +239,7 @@ public class UsuarioService {
     public List<UsuarioDTO> buscarPorTexto(String texto) {
         return usuarioRepository.buscarPorTexto(texto).stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
