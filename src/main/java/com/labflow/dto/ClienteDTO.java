@@ -1,6 +1,7 @@
 package com.labflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -21,6 +22,31 @@ public class ClienteDTO {
     @Schema(description = "Nombre del cliente", example = "Empresa ABC S.A.")
     private String nombreCliente;
 
+    @Schema(description = "Nombre completo", example = "Juan Pérez")
+    private String nombre;
+
+    @Schema(description = "Nombre de la empresa", example = "Empresa ABC S.A.")
+    private String empresa;
+
+    @Email
+    @Schema(description = "Correo electrónico", example = "contacto@empresaabc.com")
+    private String email;
+
+    @Schema(description = "Número de teléfono", example = "+56 9 1234 5678")
+    private String telefono;
+
+    @Schema(description = "Dirección completa", example = "Av. Principal 123, Santiago")
+    private String direccion;
+
+    @Schema(description = "Persona de contacto", example = "María González")
+    private String personaContacto;
+
+    @Schema(description = "Tipo de cliente", example = "Empresa")
+    private String tipoCliente;
+
+    @Schema(description = "Estado activo del cliente", example = "true")
+    private Boolean activo;
+
     @Schema(description = "Fecha de creación del registro", example = "2025-10-07T14:30:00")
     private LocalDateTime fechaCreacion;
 
@@ -29,14 +55,6 @@ public class ClienteDTO {
 
     // Constructor por defecto
     public ClienteDTO() {}
-
-    // Constructor con parámetros
-    public ClienteDTO(UUID idCliente, String nombreCliente, LocalDateTime fechaCreacion, LocalDateTime fechaActualizacion) {
-        this.idCliente = idCliente;
-        this.nombreCliente = nombreCliente;
-        this.fechaCreacion = fechaCreacion;
-        this.fechaActualizacion = fechaActualizacion;
-    }
 
     // Getters y Setters
     public UUID getIdCliente() {
@@ -53,6 +71,70 @@ public class ClienteDTO {
 
     public void setNombreCliente(String nombreCliente) {
         this.nombreCliente = nombreCliente;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(String empresa) {
+        this.empresa = empresa;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getPersonaContacto() {
+        return personaContacto;
+    }
+
+    public void setPersonaContacto(String personaContacto) {
+        this.personaContacto = personaContacto;
+    }
+
+    public String getTipoCliente() {
+        return tipoCliente;
+    }
+
+    public void setTipoCliente(String tipoCliente) {
+        this.tipoCliente = tipoCliente;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 
     public LocalDateTime getFechaCreacion() {

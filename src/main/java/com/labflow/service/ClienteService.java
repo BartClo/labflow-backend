@@ -30,6 +30,14 @@ public class ClienteService {
     public ClienteDTO crearCliente(ClienteCreateDTO clienteCreateDTO) {
         Client client = new Client();
         client.setNombreCliente(clienteCreateDTO.getNombreCliente());
+        client.setNombre(clienteCreateDTO.getNombre());
+        client.setEmpresa(clienteCreateDTO.getEmpresa());
+        client.setEmail(clienteCreateDTO.getEmail());
+        client.setTelefono(clienteCreateDTO.getTelefono());
+        client.setDireccion(clienteCreateDTO.getDireccion());
+        client.setPersonaContacto(clienteCreateDTO.getPersonaContacto());
+        client.setTipoCliente(clienteCreateDTO.getTipoCliente() != null ? clienteCreateDTO.getTipoCliente() : "Empresa");
+        client.setActivo(clienteCreateDTO.getActivo() != null ? clienteCreateDTO.getActivo() : Boolean.TRUE);
         
         Client savedClient = clientRepository.save(client);
         return convertToDTO(savedClient);
@@ -64,6 +72,16 @@ public class ClienteService {
         if (existingClient.isPresent()) {
             Client client = existingClient.get();
             client.setNombreCliente(clienteCreateDTO.getNombreCliente());
+            client.setNombre(clienteCreateDTO.getNombre());
+            client.setEmpresa(clienteCreateDTO.getEmpresa());
+            client.setEmail(clienteCreateDTO.getEmail());
+            client.setTelefono(clienteCreateDTO.getTelefono());
+            client.setDireccion(clienteCreateDTO.getDireccion());
+            client.setPersonaContacto(clienteCreateDTO.getPersonaContacto());
+            client.setTipoCliente(clienteCreateDTO.getTipoCliente());
+            if (clienteCreateDTO.getActivo() != null) {
+                client.setActivo(clienteCreateDTO.getActivo());
+            }
             // No necesitamos setUpdatedAt manualmente, @UpdateTimestamp lo maneja
             
             Client updatedClient = clientRepository.save(client);
@@ -99,11 +117,19 @@ public class ClienteService {
      * Convertir entidad a DTO
      */
     private ClienteDTO convertToDTO(Client client) {
-        return new ClienteDTO(
-                client.getIdCliente(),
-                client.getNombreCliente(),
-                client.getFechaCreacion(),
-                client.getFechaActualizacion()
-        );
+        ClienteDTO dto = new ClienteDTO();
+        dto.setIdCliente(client.getIdCliente());
+        dto.setNombreCliente(client.getNombreCliente());
+        dto.setNombre(client.getNombre());
+        dto.setEmpresa(client.getEmpresa());
+        dto.setEmail(client.getEmail());
+        dto.setTelefono(client.getTelefono());
+        dto.setDireccion(client.getDireccion());
+        dto.setPersonaContacto(client.getPersonaContacto());
+        dto.setTipoCliente(client.getTipoCliente());
+        dto.setActivo(client.getActivo());
+        dto.setFechaCreacion(client.getFechaCreacion());
+        dto.setFechaActualizacion(client.getFechaActualizacion());
+        return dto;
     }
 }

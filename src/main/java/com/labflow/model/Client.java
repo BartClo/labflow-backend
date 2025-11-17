@@ -1,6 +1,9 @@
 package com.labflow.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,6 +15,9 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "clientes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Client {
 
     @Id
@@ -22,6 +28,30 @@ public class Client {
     @Column(name = "nombre_cliente", nullable = false, length = 255)
     private String nombreCliente;
 
+    @Column(name = "nombre", length = 100)
+    private String nombre;
+
+    @Column(name = "empresa", length = 200)
+    private String empresa;
+
+    @Column(name = "email", length = 100)
+    private String email;
+
+    @Column(name = "telefono", length = 20)
+    private String telefono;
+
+    @Column(name = "direccion", length = 255)
+    private String direccion;
+
+    @Column(name = "persona_contacto", length = 100)
+    private String personaContacto;
+
+    @Column(name = "tipo_cliente", length = 50)
+    private String tipoCliente = "Empresa";
+
+    @Column(name = "activo")
+    private Boolean activo = true;
+
     @CreationTimestamp
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
@@ -30,59 +60,7 @@ public class Client {
     @Column(name = "fecha_actualizacion", nullable = false)
     private LocalDateTime fechaActualizacion;
 
-    // Constructores
-    public Client() {
-    }
-
-    public Client(String nombreCliente) {
-        this.nombreCliente = nombreCliente;
-    }
-
-    // Getters y Setters
-    public UUID getIdCliente() {
-        return idCliente;
-    }
-
-    public void setIdCliente(UUID idCliente) {
-        this.idCliente = idCliente;
-    }
-
-    public String getNombreCliente() {
-        return nombreCliente;
-    }
-
-    public void setNombreCliente(String nombreCliente) {
-        this.nombreCliente = nombreCliente;
-    }
-
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-    public LocalDateTime getFechaActualizacion() {
-        return fechaActualizacion;
-    }
-
-    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
-    }
-
-    // toString
-    @Override
-    public String toString() {
-        return "Client{" +
-                "idCliente=" + idCliente +
-                ", nombreCliente='" + nombreCliente + '\'' +
-                ", fechaCreacion=" + fechaCreacion +
-                ", fechaActualizacion=" + fechaActualizacion +
-                '}';
-    }
-
-    // equals y hashCode
+    // equals y hashCode basados en id
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
