@@ -1,5 +1,6 @@
 package com.labflow.dto;
 
+import com.labflow.validation.AdultoMayor;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -52,7 +53,8 @@ public class UsuarioCreateDTO {
     private String direccion;
 
     @Past(message = "La fecha de nacimiento debe ser en el pasado")
-    @Schema(description = "Fecha de nacimiento del usuario", example = "1990-01-15")
+    @AdultoMayor(message = "Debes ser mayor de 18 años para registrarte")
+    @Schema(description = "Fecha de nacimiento del usuario (debe ser mayor de 18 años)", example = "1990-01-15")
     private LocalDate fechaNacimiento;
 
     @NotNull(message = "El rol es obligatorio")
