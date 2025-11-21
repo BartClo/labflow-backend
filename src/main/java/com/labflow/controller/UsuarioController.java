@@ -1,5 +1,7 @@
 package com.labflow.controller;
 
+import com.labflow.dto.LoginRequestDTO;
+import com.labflow.dto.LoginResponseDTO;
 import com.labflow.dto.UsuarioCreateDTO;
 import com.labflow.dto.UsuarioDTO;
 import com.labflow.service.UsuarioService;
@@ -27,6 +29,18 @@ import java.util.UUID;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+
+    @PostMapping("/login")
+    @Operation(summary = "Iniciar sesión", description = "Valida las credenciales de un usuario y retorna su información con el rol asignado")
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
+        LoginResponseDTO response = usuarioService.login(loginRequest);
+        
+        if (response.getSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
 
     @PostMapping
     @Operation(summary = "Crear nuevo usuario", description = "Crea un nuevo usuario en el sistema con su rol asignado")

@@ -1,5 +1,7 @@
 package com.labflow.service;
 
+import com.labflow.dto.LoginRequestDTO;
+import com.labflow.dto.LoginResponseDTO;
 import com.labflow.dto.RolDTO;
 import com.labflow.dto.UsuarioCreateDTO;
 import com.labflow.dto.UsuarioDTO;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,6 +28,39 @@ public class UsuarioService {
     
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+
+    /**
+     * Login - Validar credenciales de usuario
+     */
+    @Transactional
+    public LoginResponseDTO login(LoginRequestDTO loginRequest) {
+        // Buscar usuario por username
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(loginRequest.getUsername());
+        
+        if (usuarioOpt.isEmpty()) {
+            return LoginResponseDTO.failed("Usuario no encontrado");
+        }
+        
+        Usuario usuario = usuarioOpt.get();
+        
+        // Validar que el usuario esté activo
+        if (!usuario.getActivo()) {
+            return LoginResponseDTO.failed("Usuario inactivo");
+        }
+        
+        // Validar contraseña (en texto plano por ahora - NOTA: implementar BCrypt en producción)
+        if (!usuario.getPassword().equals(loginRequest.getPassword())) {
+            return LoginResponseDTO.failed("Contraseña incorrecta");
+        }
+        
+        // Registrar la conexión
+        usuario.registrarConexion();
+        usuarioRepository.save(usuario);
+        
+        // Convertir a DTO y retornar respuesta exitosa
+        UsuarioDTO usuarioDTO = convertirADTO(usuario);
+        return new LoginResponseDTO(usuarioDTO);
+    }
 
     /**
      * Crear nuevo usuario
