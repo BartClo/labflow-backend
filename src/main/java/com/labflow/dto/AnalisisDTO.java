@@ -49,6 +49,9 @@ public class AnalisisDTO {
     @Schema(description = "Precio en pesos chilenos", example = "25000.00")
     private BigDecimal precioClp;
 
+    @Schema(description = "Días estimados para entrega de resultados", example = "3")
+    private Integer diasEntrega;
+
     @Schema(description = "Estado del análisis", example = "Activo")
     private String estado;
 
@@ -150,6 +153,14 @@ public class AnalisisDTO {
 
     public void setPrecioClp(BigDecimal precioClp) {
         this.precioClp = precioClp;
+    }
+
+    public Integer getDiasEntrega() {
+        return diasEntrega;
+    }
+
+    public void setDiasEntrega(Integer diasEntrega) {
+        this.diasEntrega = diasEntrega;
     }
 
     public String getEstado() {

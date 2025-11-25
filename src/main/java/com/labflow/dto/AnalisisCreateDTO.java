@@ -55,6 +55,10 @@ public class AnalisisCreateDTO {
     @Schema(description = "Precio en pesos chilenos", example = "25000.00")
     private BigDecimal precioClp;
 
+    @Min(value = 1, message = "Los días de entrega deben ser al menos 1")
+    @Schema(description = "Días estimados para entrega de resultados", example = "3")
+    private Integer diasEntrega;
+
     @Pattern(regexp = "^(Activo|Inactivo|En Desarrollo)$", 
              message = "El estado debe ser: Activo, Inactivo o En Desarrollo")
     @Schema(description = "Estado del análisis", example = "Activo", 
@@ -145,6 +149,14 @@ public class AnalisisCreateDTO {
 
     public void setPrecioClp(BigDecimal precioClp) {
         this.precioClp = precioClp;
+    }
+
+    public Integer getDiasEntrega() {
+        return diasEntrega;
+    }
+
+    public void setDiasEntrega(Integer diasEntrega) {
+        this.diasEntrega = diasEntrega;
     }
 
     public String getEstado() {

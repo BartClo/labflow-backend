@@ -169,6 +169,7 @@ public class AnalisisService {
         dto.setEquiposRequeridos(analisis.getEquiposRequeridos());
         dto.setDuracionEstimadaHoras(analisis.getDuracionEstimadaHoras());
         dto.setPrecioClp(analisis.getPrecioClp());
+        dto.setDiasEntrega(analisis.getDiasEntrega());
         dto.setEstado(analisis.getEstado());
         dto.setFechaCreacion(analisis.getFechaCreacion());
         dto.setFechaActualizacion(analisis.getFechaActualizacion());
@@ -189,6 +190,7 @@ public class AnalisisService {
         analisis.setEquiposRequeridos(dto.getEquiposRequeridos());
         analisis.setDuracionEstimadaHoras(dto.getDuracionEstimadaHoras());
         analisis.setPrecioClp(dto.getPrecioClp());
+        analisis.setDiasEntrega(dto.getDiasEntrega());
         analisis.setEstado(dto.getEstado());
     }
 }
