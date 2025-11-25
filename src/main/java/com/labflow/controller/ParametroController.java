@@ -180,7 +180,7 @@ public class ParametroController {
         try {
             return parametroService.actualizar(id, updateDTO)
                     .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Servicio para gestionar parámetros de análisis
@@ -37,7 +36,7 @@ public class ParametroService {
     public List<ParametroDTO> obtenerTodos() {
         return parametroRepository.findAll().stream()
                 .map(this::convertirADto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -54,7 +53,7 @@ public class ParametroService {
     public List<ParametroDTO> obtenerPorAnalisisId(UUID idAnalisis) {
         return parametroRepository.findByAnalisisId(idAnalisis).stream()
                 .map(this::convertirADto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -63,7 +62,7 @@ public class ParametroService {
     public List<ParametroDTO> buscarPorNombre(String nombre) {
         return parametroRepository.findByNombreContaining(nombre).stream()
                 .map(this::convertirADto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -107,7 +106,6 @@ public class ParametroService {
         if (createDTO.getConfiguracionesControl() != null && !createDTO.getConfiguracionesControl().isEmpty()) {
             for (ConfigControlCalidadCreateDTO configDTO : createDTO.getConfiguracionesControl()) {
                 ConfigControlCalidad config = new ConfigControlCalidad(
-                    UUID.randomUUID(),
                     parametro,
                     configDTO.getTipoControl(),
                     configDTO.getRecuperacionMin(),
@@ -156,7 +154,6 @@ public class ParametroService {
                     if (updateDTO.getConfiguracionesControl() != null && !updateDTO.getConfiguracionesControl().isEmpty()) {
                         for (ConfigControlCalidadCreateDTO configDTO : updateDTO.getConfiguracionesControl()) {
                             ConfigControlCalidad config = new ConfigControlCalidad(
-                                UUID.randomUUID(),
                                 parametro,
                                 configDTO.getTipoControl(),
                                 configDTO.getRecuperacionMin(),
@@ -198,7 +195,7 @@ public class ParametroService {
         if (parametro.getConfiguracionesControl() != null) {
             List<ConfigControlCalidadDTO> configuracionesDTO = parametro.getConfiguracionesControl().stream()
                     .map(this::convertirConfigControlADto)
-                    .collect(Collectors.toList());
+                    .toList();
             dto.setConfiguracionesControl(configuracionesDTO);
         }
 

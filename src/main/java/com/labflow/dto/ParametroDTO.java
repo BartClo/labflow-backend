@@ -32,6 +32,7 @@ public class ParametroDTO {
 
     // Constructor por defecto
     public ParametroDTO() {
+        // Constructor vacío requerido para serialización JSON
     }
 
     // Getters y Setters

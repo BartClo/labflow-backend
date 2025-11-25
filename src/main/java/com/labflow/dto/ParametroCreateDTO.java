@@ -39,6 +39,7 @@ public class ParametroCreateDTO {
 
     // Constructor por defecto
     public ParametroCreateDTO() {
+        // Constructor vacío requerido para serialización JSON
     }
 
     // Getters y Setters

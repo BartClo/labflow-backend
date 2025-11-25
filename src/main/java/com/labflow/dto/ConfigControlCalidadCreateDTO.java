@@ -36,6 +36,7 @@ public class ConfigControlCalidadCreateDTO {
 
     // Constructor por defecto
     public ConfigControlCalidadCreateDTO() {
+        // Constructor vacío requerido para serialización JSON
     }
 
     // Constructor con todos los campos

@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -31,7 +32,7 @@ public interface ParametroRepository extends JpaRepository<Parametro, UUID> {
      * Busca un parámetro específico de un análisis por nombre
      */
     @Query("SELECT p FROM Parametro p WHERE p.analisis.idAnalisis = :analisisId AND p.nombre = :nombre")
-    Parametro findByAnalisisIdAndNombre(@Param("analisisId") UUID analisisId, @Param("nombre") String nombre);
+    Optional<Parametro> findByAnalisisIdAndNombre(@Param("analisisId") UUID analisisId, @Param("nombre") String nombre);
 
     /**
      * Cuenta cuántos parámetros tiene un análisis
