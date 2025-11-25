@@ -57,6 +57,9 @@ public class Analisis {
     @Column(name = "precio_clp", precision = 10, scale = 2)
     private BigDecimal precioClp;
 
+    @Column(name = "dias_entrega")
+    private Integer diasEntrega;
+
     @Column(name = "estado", nullable = false, length = 50)
     private String estado = "Activo";
 
@@ -165,6 +168,14 @@ public class Analisis {
 
     public void setPrecioClp(BigDecimal precioClp) {
         this.precioClp = precioClp;
+    }
+
+    public Integer getDiasEntrega() {
+        return diasEntrega;
+    }
+
+    public void setDiasEntrega(Integer diasEntrega) {
+        this.diasEntrega = diasEntrega;
     }
 
     public String getEstado() {
