@@ -7,7 +7,6 @@ import com.labflow.repository.AnalisisRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -96,15 +95,13 @@ public class AnalisisService {
             throw new IllegalArgumentException("Ya existe un análisis con el código: " + createDTO.getCodigo());
         }
 
-        // Crear entidad
+        // Crear entidad - NO establecer el ID manualmente, dejar que Hibernate lo genere
         Analisis analisis = new Analisis();
-        analisis.setIdAnalisis(UUID.randomUUID());
         mapearDesdeDtoCreate(createDTO, analisis);
-        analisis.setFechaCreacion(LocalDateTime.now());
-        analisis.setFechaActualizacion(LocalDateTime.now());
+        // Las fechas se establecen automáticamente con @CreationTimestamp y @UpdateTimestamp
 
-        // Guardar
-        Analisis analisisGuardado = analisisRepository.save(analisis);
+        // Guardar y forzar flush para que Hibernate aplique los timestamps
+        Analisis analisisGuardado = analisisRepository.saveAndFlush(analisis);
         return convertirADto(analisisGuardado);
     }
 
@@ -121,10 +118,10 @@ public class AnalisisService {
 
                     // Actualizar campos
                     mapearDesdeDtoCreate(updateDTO, analisis);
-                    analisis.setFechaActualizacion(LocalDateTime.now());
+                    // La fecha de actualización se establece automáticamente con @UpdateTimestamp
 
-                    // Guardar
-                    Analisis analisisActualizado = analisisRepository.save(analisis);
+                    // Guardar y forzar flush para que Hibernate aplique los timestamps
+                    Analisis analisisActualizado = analisisRepository.saveAndFlush(analisis);
                     return convertirADto(analisisActualizado);
                 });
     }
@@ -147,8 +144,8 @@ public class AnalisisService {
         return analisisRepository.findById(id)
                 .map(analisis -> {
                     analisis.setEstado(nuevoEstado);
-                    analisis.setFechaActualizacion(LocalDateTime.now());
-                    Analisis analisisActualizado = analisisRepository.save(analisis);
+                    // La fecha de actualización se establece automáticamente con @UpdateTimestamp
+                    Analisis analisisActualizado = analisisRepository.saveAndFlush(analisis);
                     return convertirADto(analisisActualizado);
                 });
     }

@@ -45,11 +45,11 @@ CREATE TABLE config_control_calidad (
         REFERENCES parametro(id) 
         ON DELETE CASCADE,
     
-    -- Constraints para validar rangos
+    -- Constraints para validar rangos (permite valores sobre 100% para casos como Spike)
     CONSTRAINT chk_config_recuperacion_min 
-        CHECK (recuperacion_min >= 0 AND recuperacion_min <= 100),
+        CHECK (recuperacion_min >= 0 AND recuperacion_min <= 200),
     CONSTRAINT chk_config_recuperacion_max 
-        CHECK (recuperacion_max >= 0 AND recuperacion_max <= 100),
+        CHECK (recuperacion_max >= 0 AND recuperacion_max <= 200),
     CONSTRAINT chk_config_recuperacion_range 
         CHECK (recuperacion_max >= recuperacion_min),
     
