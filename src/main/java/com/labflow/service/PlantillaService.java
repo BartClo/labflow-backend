@@ -11,7 +11,6 @@ import com.labflow.repository.PlantillaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -106,10 +105,9 @@ public class PlantillaService {
 
         // Crear entidad plantilla
         Plantilla plantilla = new Plantilla();
-        plantilla.setIdPlantilla(UUID.randomUUID());
+        // El ID se genera automáticamente con @GeneratedValue
         mapearDesdeDtoCreate(createDTO, plantilla);
-        plantilla.setFechaCreacion(LocalDateTime.now());
-        plantilla.setFechaActualizacion(LocalDateTime.now());
+        // Las fechas se setean automáticamente con @CreationTimestamp y @UpdateTimestamp
 
         // Guardar plantilla
         Plantilla plantillaGuardada = plantillaRepository.save(plantilla);
@@ -142,7 +140,7 @@ public class PlantillaService {
 
                     // Actualizar campos básicos
                     mapearDesdeDtoCreate(updateDTO, plantilla);
-                    plantilla.setFechaActualizacion(LocalDateTime.now());
+                    // La fechaActualizacion se setea automáticamente con @UpdateTimestamp
 
                     // Actualizar análisis incluidos
                     if (updateDTO.getAnalisisIncluidos() != null) {
@@ -178,7 +176,7 @@ public class PlantillaService {
         return plantillaRepository.findById(id)
                 .map(plantilla -> {
                     plantilla.setEstado(nuevoEstado);
-                    plantilla.setFechaActualizacion(LocalDateTime.now());
+                    // La fechaActualizacion se setea automáticamente con @UpdateTimestamp
                     Plantilla plantillaActualizada = plantillaRepository.save(plantilla);
                     return convertirADto(plantillaActualizada);
                 });
