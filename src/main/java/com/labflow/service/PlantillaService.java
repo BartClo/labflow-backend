@@ -97,6 +97,13 @@ public class PlantillaService {
             throw new IllegalArgumentException("Ya existe una plantilla con el nombre: " + createDTO.getNombrePlantilla());
         }
 
+        // Validar campos de paquete comercial
+        if (Boolean.TRUE.equals(createDTO.getEsPaqueteComercial())) {
+            if (createDTO.getPrecioPaquete() == null || createDTO.getPrecioPaquete().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("El precio del paquete es obligatorio y debe ser mayor a 0 para paquetes comerciales");
+            }
+        }
+
         // Crear entidad plantilla
         Plantilla plantilla = new Plantilla();
         plantilla.setIdPlantilla(UUID.randomUUID());
@@ -124,6 +131,13 @@ public class PlantillaService {
                     // Validar que el nombre no exista en otra plantilla
                     if (plantillaRepository.existsByNombrePlantillaAndIdPlantillaNot(updateDTO.getNombrePlantilla(), id)) {
                         throw new IllegalArgumentException("Ya existe otra plantilla con el nombre: " + updateDTO.getNombrePlantilla());
+                    }
+
+                    // Validar campos de paquete comercial
+                    if (Boolean.TRUE.equals(updateDTO.getEsPaqueteComercial())) {
+                        if (updateDTO.getPrecioPaquete() == null || updateDTO.getPrecioPaquete().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+                            throw new IllegalArgumentException("El precio del paquete es obligatorio y debe ser mayor a 0 para paquetes comerciales");
+                        }
                     }
 
                     // Actualizar campos básicos

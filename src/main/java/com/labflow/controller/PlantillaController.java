@@ -67,7 +67,7 @@ public class PlantillaController {
 
     @Operation(summary = "Crear nueva plantilla")
     @PostMapping
-    public ResponseEntity<Object> crear(@Valid @RequestBody PlantillaCreateDTO createDTO) {
+    public ResponseEntity<Object> crear(@RequestBody PlantillaCreateDTO createDTO) {
         try {
             PlantillaDTO nuevaPlantilla = plantillaService.crear(createDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPlantilla);
@@ -78,7 +78,7 @@ public class PlantillaController {
 
     @Operation(summary = "Actualizar plantilla")
     @PutMapping("/{id}")
-    public ResponseEntity<Object> actualizar(@PathVariable UUID id, @Valid @RequestBody PlantillaCreateDTO updateDTO) {
+    public ResponseEntity<Object> actualizar(@PathVariable UUID id, @RequestBody PlantillaCreateDTO updateDTO) {
         try {
             Optional<PlantillaDTO> plantillaActualizada = plantillaService.actualizar(id, updateDTO);
             return plantillaActualizada.map(plantilla -> ResponseEntity.ok((Object) plantilla))

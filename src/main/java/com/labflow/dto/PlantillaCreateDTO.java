@@ -41,9 +41,8 @@ public class PlantillaCreateDTO {
     @Schema(description = "Indica si es un paquete comercial", example = "false")
     private Boolean esPaqueteComercial = false;
 
-    @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor a 0")
     @Digits(integer = 13, fraction = 2, message = "El precio debe tener máximo 13 enteros y 2 decimales")
-    @Schema(description = "Precio del paquete comercial", example = "150000.00")
+    @Schema(description = "Precio del paquete comercial (requerido si esPaqueteComercial=true)", example = "150000.00")
     private BigDecimal precioPaquete;
 
     @Size(max = 100, message = "El código del paquete no puede exceder 100 caracteres")
