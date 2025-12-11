@@ -35,7 +35,7 @@ public class UsuarioController {
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
         LoginResponseDTO response = usuarioService.login(loginRequest);
         
-        if (response.getSuccess()) {
+        if (Boolean.TRUE.equals(response.getSuccess())) {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);

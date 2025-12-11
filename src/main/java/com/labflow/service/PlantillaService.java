@@ -97,10 +97,9 @@ public class PlantillaService {
         }
 
         // Validar campos de paquete comercial
-        if (Boolean.TRUE.equals(createDTO.getEsPaqueteComercial())) {
-            if (createDTO.getPrecioPaquete() == null || createDTO.getPrecioPaquete().compareTo(java.math.BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("El precio del paquete es obligatorio y debe ser mayor a 0 para paquetes comerciales");
-            }
+        if (Boolean.TRUE.equals(createDTO.getEsPaqueteComercial()) && 
+            (createDTO.getPrecioPaquete() == null || createDTO.getPrecioPaquete().compareTo(java.math.BigDecimal.ZERO) <= 0)) {
+            throw new IllegalArgumentException("El precio del paquete es obligatorio y debe ser mayor a 0 para paquetes comerciales");
         }
 
         // Crear entidad plantilla
@@ -132,10 +131,9 @@ public class PlantillaService {
                     }
 
                     // Validar campos de paquete comercial
-                    if (Boolean.TRUE.equals(updateDTO.getEsPaqueteComercial())) {
-                        if (updateDTO.getPrecioPaquete() == null || updateDTO.getPrecioPaquete().compareTo(java.math.BigDecimal.ZERO) <= 0) {
-                            throw new IllegalArgumentException("El precio del paquete es obligatorio y debe ser mayor a 0 para paquetes comerciales");
-                        }
+                    if (Boolean.TRUE.equals(updateDTO.getEsPaqueteComercial()) && 
+                        (updateDTO.getPrecioPaquete() == null || updateDTO.getPrecioPaquete().compareTo(java.math.BigDecimal.ZERO) <= 0)) {
+                        throw new IllegalArgumentException("El precio del paquete es obligatorio y debe ser mayor a 0 para paquetes comerciales");
                     }
 
                     // Actualizar campos básicos
