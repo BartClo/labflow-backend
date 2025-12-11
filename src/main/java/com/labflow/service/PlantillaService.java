@@ -236,6 +236,9 @@ public class PlantillaService {
         dto.setDescripcion(plantilla.getDescripcion());
         dto.setEstado(plantilla.getEstado());
         dto.setTiposMuestraAplicables(plantilla.getTiposMuestraAplicables());
+        dto.setEsPaqueteComercial(plantilla.getEsPaqueteComercial());
+        dto.setPrecioPaquete(plantilla.getPrecioPaquete());
+        dto.setCodigoPaquete(plantilla.getCodigoPaquete());
         dto.setFechaCreacion(plantilla.getFechaCreacion());
         dto.setFechaActualizacion(plantilla.getFechaActualizacion());
 
@@ -268,5 +271,8 @@ public class PlantillaService {
         plantilla.setDescripcion(dto.getDescripcion());
         plantilla.setEstado(dto.getEstado());
         plantilla.setTiposMuestraAplicables(dto.getTiposMuestraAplicables());
+        plantilla.setEsPaqueteComercial(dto.getEsPaqueteComercial());
+        plantilla.setPrecioPaquete(dto.getPrecioPaquete());
+        plantilla.setCodigoPaquete(dto.getCodigoPaquete());
     }
 }

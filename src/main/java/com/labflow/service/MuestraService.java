@@ -467,6 +467,9 @@ public class MuestraService {
         dto.setFechaFinalizacion(ma.getFechaFinalizacion());
         dto.setTecnicoResponsable(ma.getTecnicoResponsable());
         dto.setObservacionesAnalisis(ma.getObservacionesAnalisis());
+        dto.setCumpleNormativa(ma.getCumpleNormativa());
+        dto.setEsControlCalidad(ma.getEsControlCalidad());
+        dto.setNotasValidacion(ma.getNotasValidacion());
         
         return dto;
     }
