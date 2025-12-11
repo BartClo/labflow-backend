@@ -16,6 +16,11 @@ import java.util.UUID;
 public interface InsumoRepository extends JpaRepository<Insumo, UUID> {
 
     /**
+     * Buscar insumo por nombre exacto
+     */
+    Optional<Insumo> findByNombre(String nombre);
+
+    /**
      * Buscar insumo por código
      */
     Optional<Insumo> findByCodigo(String codigo);

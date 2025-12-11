@@ -160,7 +160,3 @@ application-local.properties
 # Testing
 *.h2.db
 test-output/
-
-# Excel files
-*.xlsx
-*.xls

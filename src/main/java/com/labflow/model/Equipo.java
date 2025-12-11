@@ -71,6 +71,15 @@ public class Equipo {
         this.activo = true;
     }
 
+    // Constructor simplificado para el DataSeeder
+    public Equipo(String nombre, String marca, String ubicacion) {
+        this.nombre = nombre;
+        this.marca = marca;
+        this.ubicacion = ubicacion;
+        this.codigo = "EQ-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        this.activo = true;
+    }
+
     // Getters y Setters
     public UUID getEquipoId() {
         return equipoId;

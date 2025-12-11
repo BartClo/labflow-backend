@@ -33,6 +33,19 @@ public class Parametro {
     @Column(name = "valor_maximo_normativa", length = 255)
     private String valorMaximoNormativa;
 
+    // Criterios de Control de Calidad (desde Excel "Controles LABCAUSS")
+    @Column(name = "criterio_precision", columnDefinition = "TEXT")
+    private String criterioPrecision;  // Columna C: Precisión (Duplicado)
+
+    @Column(name = "criterio_exactitud", columnDefinition = "TEXT")
+    private String criterioExactitud;  // Columna D: Exactitud (Estándar)
+
+    @Column(name = "criterio_spike", columnDefinition = "TEXT")
+    private String criterioSpike;      // Columna E: Fortificada/Spike
+
+    @Column(name = "criterio_blanco", columnDefinition = "TEXT")
+    private String criterioBlanco;     // Columna F: Blanco
+
     @OneToMany(mappedBy = "parametro", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConfigControlCalidad> configuracionesControl = new ArrayList<>();
 
@@ -94,6 +107,38 @@ public class Parametro {
 
     public void setValorMaximoNormativa(String valorMaximoNormativa) {
         this.valorMaximoNormativa = valorMaximoNormativa;
+    }
+
+    public String getCriterioPrecision() {
+        return criterioPrecision;
+    }
+
+    public void setCriterioPrecision(String criterioPrecision) {
+        this.criterioPrecision = criterioPrecision;
+    }
+
+    public String getCriterioExactitud() {
+        return criterioExactitud;
+    }
+
+    public void setCriterioExactitud(String criterioExactitud) {
+        this.criterioExactitud = criterioExactitud;
+    }
+
+    public String getCriterioSpike() {
+        return criterioSpike;
+    }
+
+    public void setCriterioSpike(String criterioSpike) {
+        this.criterioSpike = criterioSpike;
+    }
+
+    public String getCriterioBlanco() {
+        return criterioBlanco;
+    }
+
+    public void setCriterioBlanco(String criterioBlanco) {
+        this.criterioBlanco = criterioBlanco;
     }
 
     public List<ConfigControlCalidad> getConfiguracionesControl() {

@@ -22,6 +22,18 @@ public interface AnalisisRepository extends JpaRepository<Analisis, UUID> {
     Optional<Analisis> findByCodigo(String codigo);
 
     /**
+     * Busca un análisis por su nombre exacto
+     */
+    Optional<Analisis> findByNombreAnalisis(String nombreAnalisis);
+    
+    /**
+     * Alias para búsqueda por nombre (mantener compatibilidad)
+     */
+    default Optional<Analisis> findByNombre(String nombre) {
+        return findByNombreAnalisis(nombre);
+    }
+
+    /**
      * Busca análisis por categoría
      */
     List<Analisis> findByCategoria(String categoria);

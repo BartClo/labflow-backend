@@ -73,6 +73,15 @@ public class Insumo {
         this.activo = true;
     }
 
+    // Constructor simplificado para el DataSeeder
+    public Insumo(String nombre, String categoria, BigDecimal stockActual) {
+        this.nombre = nombre;
+        this.categoria = categoria;
+        this.stockActual = stockActual;
+        this.codigo = "IN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        this.activo = true;
+    }
+
     // Getters y Setters
     public UUID getInsumoId() {
         return insumoId;

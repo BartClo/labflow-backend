@@ -23,6 +23,11 @@ public interface ParametroRepository extends JpaRepository<Parametro, UUID> {
     List<Parametro> findByAnalisisId(@Param("analisisId") UUID analisisId);
 
     /**
+     * Busca un parámetro por nombre exacto
+     */
+    Optional<Parametro> findByNombre(String nombre);
+
+    /**
      * Busca parámetros por nombre (búsqueda parcial, case-insensitive)
      */
     @Query("SELECT p FROM Parametro p WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")

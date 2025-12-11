@@ -84,6 +84,16 @@ public class Reactivo {
         this.activo = true;
     }
 
+    // Constructor simplificado para el DataSeeder
+    public Reactivo(String nombre, String lote, LocalDate fechaVencimiento, BigDecimal stockActual) {
+        this.nombre = nombre;
+        this.lote = lote;
+        this.fechaVencimiento = fechaVencimiento;
+        this.stockActual = stockActual;
+        this.codigo = "RE-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        this.activo = true;
+    }
+
     // Getters y Setters
     public UUID getReactivoId() {
         return reactivoId;

@@ -17,6 +17,11 @@ import java.util.UUID;
 public interface ReactivoRepository extends JpaRepository<Reactivo, UUID> {
 
     /**
+     * Buscar reactivo por nombre exacto
+     */
+    Optional<Reactivo> findByNombre(String nombre);
+
+    /**
      * Buscar reactivo por código
      */
     Optional<Reactivo> findByCodigo(String codigo);

@@ -15,6 +15,11 @@ import java.util.UUID;
 public interface EquipoRepository extends JpaRepository<Equipo, UUID> {
 
     /**
+     * Buscar equipo por nombre exacto
+     */
+    Optional<Equipo> findByNombre(String nombre);
+
+    /**
      * Buscar equipo por código
      */
     Optional<Equipo> findByCodigo(String codigo);
