@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Servicio para gestión de equipos de laboratorio
@@ -31,7 +30,7 @@ public class EquipoService {
     public List<EquipoDTO> obtenerTodos() {
         return equipoRepository.findAll().stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -40,7 +39,7 @@ public class EquipoService {
     public List<EquipoDTO> obtenerActivos() {
         return equipoRepository.findByActivoTrue().stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -65,7 +64,7 @@ public class EquipoService {
     public List<EquipoDTO> buscarPorMarca(String marca) {
         return equipoRepository.findByMarcaContainingIgnoreCaseAndActivoTrue(marca).stream()
                 .map(this::convertirADTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -137,6 +136,6 @@ public class EquipoService {
         equipo.setFechaCalibracion(dto.getFechaCalibracion());
         equipo.setProximaCalibracion(dto.getProximaCalibracion());
         equipo.setObservaciones(dto.getObservaciones());
-        equipo.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
+        equipo.setActivo(dto.getActivo() != null && dto.getActivo());
     }
 }
