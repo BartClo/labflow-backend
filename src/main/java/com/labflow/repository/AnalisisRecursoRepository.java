@@ -16,7 +16,7 @@ public interface AnalisisRecursoRepository extends JpaRepository<AnalisisRecurso
     /**
      * Buscar todos los recursos asociados a un análisis
      */
-    List<AnalisisRecurso> findByAnalisis_AnalisisId(UUID analisisId);
+    List<AnalisisRecurso> findByAnalisis_IdAnalisis(UUID idAnalisis);
 
     /**
      * Buscar análisis que usan un equipo específico

@@ -2,6 +2,7 @@ package com.labflow.repository;
 
 import com.labflow.model.Reactivo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -33,5 +34,6 @@ public interface ReactivoRepository extends JpaRepository<Reactivo, UUID> {
     /**
      * Buscar reactivos por stock bajo
      */
+    @Query("SELECT r FROM Reactivo r WHERE r.stockActual < r.stockMinimo AND r.activo = true")
     List<Reactivo> findByStockActualLessThanStockMinimoAndActivoTrue();
 }
