@@ -6,6 +6,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +35,15 @@ public class Plantilla {
     @Column(name = "tipos_muestra_aplicables", columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<String> tiposMuestraAplicables;
+
+    @Column(name = "es_paquete_comercial")
+    private Boolean esPaqueteComercial = false;
+
+    @Column(name = "precio_paquete", precision = 15, scale = 2)
+    private BigDecimal precioPaquete;
+
+    @Column(name = "codigo_paquete", length = 100)
+    private String codigoPaquete;
 
     @CreationTimestamp
     @Column(name = "fecha_creacion", nullable = false)
@@ -122,6 +132,30 @@ public class Plantilla {
 
     public void setPlantillaAnalisis(List<PlantillaAnalisis> plantillaAnalisis) {
         this.plantillaAnalisis = plantillaAnalisis;
+    }
+
+    public Boolean getEsPaqueteComercial() {
+        return esPaqueteComercial;
+    }
+
+    public void setEsPaqueteComercial(Boolean esPaqueteComercial) {
+        this.esPaqueteComercial = esPaqueteComercial;
+    }
+
+    public BigDecimal getPrecioPaquete() {
+        return precioPaquete;
+    }
+
+    public void setPrecioPaquete(BigDecimal precioPaquete) {
+        this.precioPaquete = precioPaquete;
+    }
+
+    public String getCodigoPaquete() {
+        return codigoPaquete;
+    }
+
+    public void setCodigoPaquete(String codigoPaquete) {
+        this.codigoPaquete = codigoPaquete;
     }
 
     // toString

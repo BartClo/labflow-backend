@@ -3,6 +3,7 @@ package com.labflow.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +37,18 @@ public class PlantillaCreateDTO {
     @Schema(description = "Lista de IDs de análisis incluidos en la plantilla con su orden",
             example = "[{\"analisisId\": \"123e4567-e89b-12d3-a456-426614174000\", \"orden\": 1}]")
     private List<AnalisisEnPlantillaDTO> analisisIncluidos;
+
+    @Schema(description = "Indica si es un paquete comercial", example = "false")
+    private Boolean esPaqueteComercial = false;
+
+    @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor a 0")
+    @Digits(integer = 13, fraction = 2, message = "El precio debe tener máximo 13 enteros y 2 decimales")
+    @Schema(description = "Precio del paquete comercial", example = "150000.00")
+    private BigDecimal precioPaquete;
+
+    @Size(max = 100, message = "El código del paquete no puede exceder 100 caracteres")
+    @Schema(description = "Código del paquete comercial", example = "PKG-AGUA-001")
+    private String codigoPaquete;
 
     // Constructor por defecto
     public PlantillaCreateDTO() {
@@ -81,6 +94,30 @@ public class PlantillaCreateDTO {
 
     public void setAnalisisIncluidos(List<AnalisisEnPlantillaDTO> analisisIncluidos) {
         this.analisisIncluidos = analisisIncluidos;
+    }
+
+    public Boolean getEsPaqueteComercial() {
+        return esPaqueteComercial;
+    }
+
+    public void setEsPaqueteComercial(Boolean esPaqueteComercial) {
+        this.esPaqueteComercial = esPaqueteComercial;
+    }
+
+    public BigDecimal getPrecioPaquete() {
+        return precioPaquete;
+    }
+
+    public void setPrecioPaquete(BigDecimal precioPaquete) {
+        this.precioPaquete = precioPaquete;
+    }
+
+    public String getCodigoPaquete() {
+        return codigoPaquete;
+    }
+
+    public void setCodigoPaquete(String codigoPaquete) {
+        this.codigoPaquete = codigoPaquete;
     }
 
     /**

@@ -2,6 +2,7 @@ package com.labflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +32,15 @@ public class PlantillaDTO {
 
     @Schema(description = "Lista de análisis incluidos en la plantilla")
     private List<AnalisisEnPlantillaResponseDTO> analisisIncluidos;
+
+    @Schema(description = "Indica si es un paquete comercial", example = "false")
+    private Boolean esPaqueteComercial;
+
+    @Schema(description = "Precio del paquete comercial", example = "150000.00")
+    private BigDecimal precioPaquete;
+
+    @Schema(description = "Código del paquete comercial", example = "PKG-AGUA-001")
+    private String codigoPaquete;
 
     @Schema(description = "Fecha de creación de la plantilla", example = "2025-10-07T14:30:00")
     private LocalDateTime fechaCreacion;
@@ -106,6 +116,30 @@ public class PlantillaDTO {
 
     public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public Boolean getEsPaqueteComercial() {
+        return esPaqueteComercial;
+    }
+
+    public void setEsPaqueteComercial(Boolean esPaqueteComercial) {
+        this.esPaqueteComercial = esPaqueteComercial;
+    }
+
+    public BigDecimal getPrecioPaquete() {
+        return precioPaquete;
+    }
+
+    public void setPrecioPaquete(BigDecimal precioPaquete) {
+        this.precioPaquete = precioPaquete;
+    }
+
+    public String getCodigoPaquete() {
+        return codigoPaquete;
+    }
+
+    public void setCodigoPaquete(String codigoPaquete) {
+        this.codigoPaquete = codigoPaquete;
     }
 
     /**
