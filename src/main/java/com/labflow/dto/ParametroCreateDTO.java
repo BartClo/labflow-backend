@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,10 +27,9 @@ public class ParametroCreateDTO {
     @Schema(description = "Unidad de medida", example = "Unidades de pH")
     private String unidad;
 
-    @DecimalMin(value = "0.0", inclusive = false, message = "El valor máximo debe ser mayor a 0")
-    @Digits(integer = 15, fraction = 6, message = "El valor debe tener máximo 15 enteros y 6 decimales")
-    @Schema(description = "Valor máximo permitido según normativa", example = "8.5")
-    private BigDecimal valorMaximoNormativa;
+    @Size(max = 255, message = "El valor máximo normativa no puede exceder 255 caracteres")
+    @Schema(description = "Valor máximo permitido según normativa (puede ser numérico o texto como 'Ausencia', '<LDM')", example = "8.5")
+    private String valorMaximoNormativa;
 
     @Valid
     @Schema(description = "Lista de configuraciones de control de calidad para el parámetro")
@@ -67,11 +65,11 @@ public class ParametroCreateDTO {
         this.unidad = unidad;
     }
 
-    public BigDecimal getValorMaximoNormativa() {
+    public String getValorMaximoNormativa() {
         return valorMaximoNormativa;
     }
 
-    public void setValorMaximoNormativa(BigDecimal valorMaximoNormativa) {
+    public void setValorMaximoNormativa(String valorMaximoNormativa) {
         this.valorMaximoNormativa = valorMaximoNormativa;
     }
 

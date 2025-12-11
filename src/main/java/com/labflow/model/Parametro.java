@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +30,8 @@ public class Parametro {
     @Column(name = "unidad", length = 50)
     private String unidad;
 
-    @Column(name = "valor_maximo_normativa", precision = 15, scale = 6)
-    private BigDecimal valorMaximoNormativa;
+    @Column(name = "valor_maximo_normativa", length = 255)
+    private String valorMaximoNormativa;
 
     @OneToMany(mappedBy = "parametro", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConfigControlCalidad> configuracionesControl = new ArrayList<>();
@@ -49,7 +48,7 @@ public class Parametro {
     public Parametro() {
     }
 
-    public Parametro(Analisis analisis, String nombre, String unidad, BigDecimal valorMaximoNormativa) {
+    public Parametro(Analisis analisis, String nombre, String unidad, String valorMaximoNormativa) {
         this.analisis = analisis;
         this.nombre = nombre;
         this.unidad = unidad;
@@ -89,11 +88,11 @@ public class Parametro {
         this.unidad = unidad;
     }
 
-    public BigDecimal getValorMaximoNormativa() {
+    public String getValorMaximoNormativa() {
         return valorMaximoNormativa;
     }
 
-    public void setValorMaximoNormativa(BigDecimal valorMaximoNormativa) {
+    public void setValorMaximoNormativa(String valorMaximoNormativa) {
         this.valorMaximoNormativa = valorMaximoNormativa;
     }
 

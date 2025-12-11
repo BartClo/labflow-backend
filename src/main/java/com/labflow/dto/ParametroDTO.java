@@ -2,7 +2,6 @@ package com.labflow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,8 +23,8 @@ public class ParametroDTO {
     @Schema(description = "Unidad de medida", example = "Unidades de pH")
     private String unidad;
 
-    @Schema(description = "Valor máximo permitido según normativa", example = "8.5")
-    private BigDecimal valorMaximoNormativa;
+    @Schema(description = "Valor máximo permitido según normativa (puede ser numérico o texto como 'Ausencia', '<LDM')", example = "8.5")
+    private String valorMaximoNormativa;
 
     @Schema(description = "Lista de configuraciones de control de calidad")
     private List<ConfigControlCalidadDTO> configuracionesControl;
@@ -68,11 +67,11 @@ public class ParametroDTO {
         this.unidad = unidad;
     }
 
-    public BigDecimal getValorMaximoNormativa() {
+    public String getValorMaximoNormativa() {
         return valorMaximoNormativa;
     }
 
-    public void setValorMaximoNormativa(BigDecimal valorMaximoNormativa) {
+    public void setValorMaximoNormativa(String valorMaximoNormativa) {
         this.valorMaximoNormativa = valorMaximoNormativa;
     }
 
