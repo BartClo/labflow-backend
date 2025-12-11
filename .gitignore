@@ -1,5 +1,8 @@
 # LabFlow Backend - Java/Spring Boot Project
 
+# Task/message files
+message.txt
+
 # Compiled class file
 *.class
 
