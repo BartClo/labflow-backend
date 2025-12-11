@@ -200,6 +200,15 @@ public class MuestraDTO {
         @JsonProperty("observaciones_analisis")
         private String observacionesAnalisis;
 
+        @JsonProperty("cumple_normativa")
+        private Boolean cumpleNormativa;
+
+        @JsonProperty("es_control_calidad")
+        private Boolean esControlCalidad;
+
+        @JsonProperty("notas_validacion")
+        private String notasValidacion;
+
         // Constructor por defecto requerido para deserialización JSON
         public MuestraAnalisisDTO() {
             // Constructor vacío necesario para Jackson JSON binding
@@ -276,6 +285,30 @@ public class MuestraDTO {
 
         public void setObservacionesAnalisis(String observacionesAnalisis) {
             this.observacionesAnalisis = observacionesAnalisis;
+        }
+
+        public Boolean getCumpleNormativa() {
+            return cumpleNormativa;
+        }
+
+        public void setCumpleNormativa(Boolean cumpleNormativa) {
+            this.cumpleNormativa = cumpleNormativa;
+        }
+
+        public Boolean getEsControlCalidad() {
+            return esControlCalidad;
+        }
+
+        public void setEsControlCalidad(Boolean esControlCalidad) {
+            this.esControlCalidad = esControlCalidad;
+        }
+
+        public String getNotasValidacion() {
+            return notasValidacion;
+        }
+
+        public void setNotasValidacion(String notasValidacion) {
+            this.notasValidacion = notasValidacion;
         }
     }
 

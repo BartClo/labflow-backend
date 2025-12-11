@@ -65,6 +65,15 @@ public class MuestraAnalisis {
     @Column(name = "observaciones_analisis", columnDefinition = "TEXT")
     private String observacionesAnalisis;
 
+    @Column(name = "cumple_normativa")
+    private Boolean cumpleNormativa;
+
+    @Column(name = "es_control_calidad")
+    private Boolean esControlCalidad = false;
+
+    @Column(name = "notas_validacion", columnDefinition = "TEXT")
+    private String notasValidacion;
+
     // Metadatos
     @Column(name = "fecha_agregado", updatable = false)
     private LocalDateTime fechaAgregado;
@@ -205,6 +214,30 @@ public class MuestraAnalisis {
 
     public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public Boolean getCumpleNormativa() {
+        return cumpleNormativa;
+    }
+
+    public void setCumpleNormativa(Boolean cumpleNormativa) {
+        this.cumpleNormativa = cumpleNormativa;
+    }
+
+    public Boolean getEsControlCalidad() {
+        return esControlCalidad;
+    }
+
+    public void setEsControlCalidad(Boolean esControlCalidad) {
+        this.esControlCalidad = esControlCalidad;
+    }
+
+    public String getNotasValidacion() {
+        return notasValidacion;
+    }
+
+    public void setNotasValidacion(String notasValidacion) {
+        this.notasValidacion = notasValidacion;
     }
 
     // Métodos de utilidad
