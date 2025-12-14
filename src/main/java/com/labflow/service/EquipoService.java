@@ -51,23 +51,6 @@ public class EquipoService {
     }
 
     /**
-     * Obtener equipo por código
-     */
-    public Optional<EquipoDTO> obtenerPorCodigo(String codigo) {
-        return equipoRepository.findByCodigo(codigo)
-                .map(this::convertirADTO);
-    }
-
-    /**
-     * Buscar equipos por marca
-     */
-    public List<EquipoDTO> buscarPorMarca(String marca) {
-        return equipoRepository.findByMarcaContainingIgnoreCaseAndActivoTrue(marca).stream()
-                .map(this::convertirADTO)
-                .toList();
-    }
-
-    /**
      * Crear nuevo equipo
      */
     public EquipoDTO crear(EquipoCreateDTO createDTO) {
@@ -109,8 +92,6 @@ public class EquipoService {
         EquipoDTO dto = new EquipoDTO();
         dto.setEquipoId(equipo.getEquipoId());
         dto.setNombre(equipo.getNombre());
-        dto.setCodigo(equipo.getCodigo());
-        dto.setMarca(equipo.getMarca());
         dto.setModelo(equipo.getModelo());
         dto.setNumeroSerie(equipo.getNumeroSerie());
         dto.setUbicacion(equipo.getUbicacion());
@@ -128,8 +109,6 @@ public class EquipoService {
      */
     private void mapearDTOAEntidad(EquipoCreateDTO dto, Equipo equipo) {
         equipo.setNombre(dto.getNombre());
-        equipo.setCodigo(dto.getCodigo());
-        equipo.setMarca(dto.getMarca());
         equipo.setModelo(dto.getModelo());
         equipo.setNumeroSerie(dto.getNumeroSerie());
         equipo.setUbicacion(dto.getUbicacion());

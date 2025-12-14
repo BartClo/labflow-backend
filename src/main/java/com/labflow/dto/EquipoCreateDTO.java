@@ -16,14 +16,6 @@ public class EquipoCreateDTO {
     @Schema(description = "Nombre del equipo", example = "Espectrofotómetro UV-Vis")
     private String nombre;
 
-    @Size(max = 100, message = "El código no puede exceder 100 caracteres")
-    @Schema(description = "Código único del equipo", example = "ESP-001")
-    private String codigo;
-
-    @Size(max = 100, message = "La marca no puede exceder 100 caracteres")
-    @Schema(description = "Marca del equipo", example = "Thermo Scientific")
-    private String marca;
-
     @Size(max = 100, message = "El modelo no puede exceder 100 caracteres")
     @Schema(description = "Modelo del equipo", example = "Genesys 10S")
     private String modelo;
@@ -56,22 +48,6 @@ public class EquipoCreateDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
     }
 
     public String getModelo() {

@@ -4,7 +4,6 @@ import com.labflow.dto.InsumoCreateDTO;
 import com.labflow.dto.InsumoDTO;
 import com.labflow.service.InsumoService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -50,24 +49,6 @@ public class InsumoController {
         Optional<InsumoDTO> insumo = insumoService.obtenerPorId(id);
         return insumo.map(ResponseEntity::ok)
                      .orElse(ResponseEntity.notFound().build());
-    }
-
-    @Operation(summary = "Obtener insumo por código")
-    @GetMapping("/codigo/{codigo}")
-    public ResponseEntity<InsumoDTO> obtenerPorCodigo(@PathVariable String codigo) {
-        Optional<InsumoDTO> insumo = insumoService.obtenerPorCodigo(codigo);
-        return insumo.map(ResponseEntity::ok)
-                     .orElse(ResponseEntity.notFound().build());
-    }
-
-    @Operation(summary = "Buscar insumos por categoría",
-               description = "Busca insumos que contengan el texto especificado en la categoría")
-    @GetMapping("/buscar/categoria")
-    public ResponseEntity<List<InsumoDTO>> buscarPorCategoria(
-            @Parameter(description = "Texto a buscar en la categoría", required = true)
-            @RequestParam String categoria) {
-        List<InsumoDTO> insumos = insumoService.buscarPorCategoria(categoria);
-        return ResponseEntity.ok(insumos);
     }
 
     @Operation(summary = "Crear nuevo insumo")

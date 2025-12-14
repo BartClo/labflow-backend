@@ -18,12 +18,6 @@ public class InsumoDTO {
     @Schema(description = "Nombre del insumo", example = "Placa Petri")
     private String nombre;
 
-    @Schema(description = "Código único del insumo", example = "PP-90MM-001")
-    private String codigo;
-
-    @Schema(description = "Categoría del insumo", example = "Material de vidrio")
-    private String categoria;
-
     @Schema(description = "Marca del insumo", example = "Pyrex")
     private String marca;
 
@@ -69,22 +63,6 @@ public class InsumoDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
     }
 
     public String getMarca() {

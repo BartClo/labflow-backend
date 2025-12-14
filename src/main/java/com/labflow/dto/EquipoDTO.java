@@ -18,12 +18,6 @@ public class EquipoDTO {
     @Schema(description = "Nombre del equipo", example = "Espectrofotómetro UV-Vis")
     private String nombre;
 
-    @Schema(description = "Código único del equipo", example = "ESP-001")
-    private String codigo;
-
-    @Schema(description = "Marca del equipo", example = "Thermo Scientific")
-    private String marca;
-
     @Schema(description = "Modelo del equipo", example = "Genesys 10S")
     private String modelo;
 
@@ -66,22 +60,6 @@ public class EquipoDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
     }
 
     public String getModelo() {

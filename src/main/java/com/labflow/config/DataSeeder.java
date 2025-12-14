@@ -230,7 +230,7 @@ public class DataSeeder implements CommandLineRunner {
                 switch (tipo) {
                     case TIPO_EQUIPO:
                         Equipo equipo = equipoRepo.findByNombre(item)
-                                .orElseGet(() -> equipoRepo.save(new Equipo(item, "GENERICO", "OPERATIVO")));
+                                .orElseGet(() -> equipoRepo.save(new Equipo(item, "OPERATIVO")));
                         recurso.setEquipo(equipo);
                         break;
                     case TIPO_REACTIVO:
@@ -240,7 +240,7 @@ public class DataSeeder implements CommandLineRunner {
                         break;
                     case TIPO_INSUMO:
                         Insumo insumo = insumoRepo.findByNombre(item)
-                                .orElseGet(() -> insumoRepo.save(new Insumo(item, "GENERICO", BigDecimal.valueOf(100))));
+                                .orElseGet(() -> insumoRepo.save(new Insumo(item, BigDecimal.valueOf(100))));
                         recurso.setInsumo(insumo);
                         break;
                     default:

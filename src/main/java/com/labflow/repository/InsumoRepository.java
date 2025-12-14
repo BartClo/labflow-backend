@@ -21,19 +21,9 @@ public interface InsumoRepository extends JpaRepository<Insumo, UUID> {
     Optional<Insumo> findByNombre(String nombre);
 
     /**
-     * Buscar insumo por código
-     */
-    Optional<Insumo> findByCodigo(String codigo);
-
-    /**
      * Listar insumos activos
      */
     List<Insumo> findByActivoTrue();
-
-    /**
-     * Buscar insumos por categoría
-     */
-    List<Insumo> findByCategoriaContainingIgnoreCaseAndActivoTrue(String categoria);
 
     /**
      * Buscar insumos con stock bajo

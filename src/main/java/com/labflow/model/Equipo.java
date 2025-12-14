@@ -24,12 +24,6 @@ public class Equipo {
     @Column(name = "nombre", nullable = false, length = 200)
     private String nombre;
 
-    @Column(name = "codigo", unique = true, length = 100)
-    private String codigo;
-
-    @Column(name = "marca", length = 100)
-    private String marca;
-
     @Column(name = "modelo", length = 100)
     private String modelo;
 
@@ -63,20 +57,10 @@ public class Equipo {
     public Equipo() {
     }
 
-    public Equipo(String nombre, String codigo, String marca, String modelo) {
-        this.nombre = nombre;
-        this.codigo = codigo;
-        this.marca = marca;
-        this.modelo = modelo;
-        this.activo = true;
-    }
-
     // Constructor simplificado para el DataSeeder
-    public Equipo(String nombre, String marca, String ubicacion) {
+    public Equipo(String nombre, String ubicacion) {
         this.nombre = nombre;
-        this.marca = marca;
         this.ubicacion = ubicacion;
-        this.codigo = "EQ-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.activo = true;
     }
 
@@ -95,22 +79,6 @@ public class Equipo {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
     }
 
     public String getModelo() {

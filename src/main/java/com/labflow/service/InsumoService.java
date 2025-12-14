@@ -41,17 +41,6 @@ public class InsumoService {
                 .map(this::convertirADTO);
     }
 
-    public Optional<InsumoDTO> obtenerPorCodigo(String codigo) {
-        return insumoRepository.findByCodigo(codigo)
-                .map(this::convertirADTO);
-    }
-
-    public List<InsumoDTO> buscarPorCategoria(String categoria) {
-        return insumoRepository.findByCategoriaContainingIgnoreCaseAndActivoTrue(categoria).stream()
-                .map(this::convertirADTO)
-                .toList();
-    }
-
     public InsumoDTO crear(InsumoCreateDTO createDTO) {
         Insumo insumo = new Insumo();
         mapearDTOAEntidad(createDTO, insumo);
@@ -82,8 +71,6 @@ public class InsumoService {
         InsumoDTO dto = new InsumoDTO();
         dto.setInsumoId(insumo.getInsumoId());
         dto.setNombre(insumo.getNombre());
-        dto.setCodigo(insumo.getCodigo());
-        dto.setCategoria(insumo.getCategoria());
         dto.setMarca(insumo.getMarca());
         dto.setDescripcion(insumo.getDescripcion());
         dto.setStockActual(insumo.getStockActual());
@@ -99,8 +86,6 @@ public class InsumoService {
 
     private void mapearDTOAEntidad(InsumoCreateDTO dto, Insumo insumo) {
         insumo.setNombre(dto.getNombre());
-        insumo.setCodigo(dto.getCodigo());
-        insumo.setCategoria(dto.getCategoria());
         insumo.setMarca(dto.getMarca());
         insumo.setDescripcion(dto.getDescripcion());
         insumo.setStockActual(dto.getStockActual());

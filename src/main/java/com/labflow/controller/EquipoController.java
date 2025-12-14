@@ -80,41 +80,6 @@ public class EquipoController {
                      .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Obtener equipo por código", 
-               description = "Retorna un equipo específico basado en su código")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", 
-                    description = "Equipo encontrado exitosamente",
-                    content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = EquipoDTO.class))),
-        @ApiResponse(responseCode = "404", 
-                    description = "Equipo no encontrado")
-    })
-    @GetMapping("/codigo/{codigo}")
-    public ResponseEntity<EquipoDTO> obtenerPorCodigo(
-            @Parameter(description = "Código del equipo", required = true)
-            @PathVariable String codigo) {
-        Optional<EquipoDTO> equipo = equipoService.obtenerPorCodigo(codigo);
-        return equipo.map(ResponseEntity::ok)
-                     .orElse(ResponseEntity.notFound().build());
-    }
-
-    @Operation(summary = "Buscar equipos por marca", 
-               description = "Busca equipos que contengan el texto especificado en la marca")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", 
-                    description = "Búsqueda realizada exitosamente",
-                    content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = EquipoDTO.class)))
-    })
-    @GetMapping("/buscar/marca")
-    public ResponseEntity<List<EquipoDTO>> buscarPorMarca(
-            @Parameter(description = "Texto a buscar en la marca", required = true)
-            @RequestParam String marca) {
-        List<EquipoDTO> equipos = equipoService.buscarPorMarca(marca);
-        return ResponseEntity.ok(equipos);
-    }
-
     @Operation(summary = "Crear nuevo equipo", 
                description = "Crea un nuevo equipo de laboratorio")
     @ApiResponses(value = {

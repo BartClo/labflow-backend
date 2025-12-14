@@ -16,14 +16,6 @@ public class InsumoCreateDTO {
     @Schema(description = "Nombre del insumo", example = "Placa Petri")
     private String nombre;
 
-    @Size(max = 100, message = "El código no puede exceder 100 caracteres")
-    @Schema(description = "Código único del insumo", example = "PP-90MM-001")
-    private String codigo;
-
-    @Size(max = 100, message = "La categoría no puede exceder 100 caracteres")
-    @Schema(description = "Categoría del insumo", example = "Material de vidrio")
-    private String categoria;
-
     @Size(max = 100, message = "La marca no puede exceder 100 caracteres")
     @Schema(description = "Marca del insumo", example = "Pyrex")
     private String marca;
@@ -64,22 +56,6 @@ public class InsumoCreateDTO {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
     }
 
     public String getMarca() {

@@ -20,17 +20,7 @@ public interface EquipoRepository extends JpaRepository<Equipo, UUID> {
     Optional<Equipo> findByNombre(String nombre);
 
     /**
-     * Buscar equipo por código
-     */
-    Optional<Equipo> findByCodigo(String codigo);
-
-    /**
      * Listar equipos activos
      */
     List<Equipo> findByActivoTrue();
-
-    /**
-     * Buscar equipos por marca
-     */
-    List<Equipo> findByMarcaContainingIgnoreCaseAndActivoTrue(String marca);
 }

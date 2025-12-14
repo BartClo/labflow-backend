@@ -24,12 +24,6 @@ public class Insumo {
     @Column(name = "nombre", nullable = false, length = 200)
     private String nombre;
 
-    @Column(name = "codigo", unique = true, length = 100)
-    private String codigo;
-
-    @Column(name = "categoria", length = 100)
-    private String categoria;
-
     @Column(name = "marca", length = 100)
     private String marca;
 
@@ -66,19 +60,16 @@ public class Insumo {
     public Insumo() {
     }
 
-    public Insumo(String nombre, String codigo, String categoria) {
+    public Insumo(String nombre, String marca) {
         this.nombre = nombre;
-        this.codigo = codigo;
-        this.categoria = categoria;
+        this.marca = marca;
         this.activo = true;
     }
 
     // Constructor simplificado para el DataSeeder
-    public Insumo(String nombre, String categoria, BigDecimal stockActual) {
+    public Insumo(String nombre, BigDecimal stockActual) {
         this.nombre = nombre;
-        this.categoria = categoria;
         this.stockActual = stockActual;
-        this.codigo = "IN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.activo = true;
     }
 
@@ -97,22 +88,6 @@ public class Insumo {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
     }
 
     public String getMarca() {
