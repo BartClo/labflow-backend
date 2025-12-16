@@ -43,6 +43,12 @@ public class AnalisisDTO {
     @Schema(description = "Equipos requeridos para el análisis")
     private Map<String, Object> equiposRequeridos;
 
+    @Schema(description = "Insumos requeridos para el análisis")
+    private Map<String, Object> insumosRequeridos;
+
+    @Schema(description = "Reactivos requeridos para el análisis")
+    private Map<String, Object> reactivosRequeridos;
+
     @Schema(description = "Duración estimada en horas", example = "2.5")
     private BigDecimal duracionEstimadaHoras;
 
@@ -137,6 +143,22 @@ public class AnalisisDTO {
 
     public void setEquiposRequeridos(Map<String, Object> equiposRequeridos) {
         this.equiposRequeridos = equiposRequeridos;
+    }
+
+    public Map<String, Object> getInsumosRequeridos() {
+        return insumosRequeridos;
+    }
+
+    public void setInsumosRequeridos(Map<String, Object> insumosRequeridos) {
+        this.insumosRequeridos = insumosRequeridos;
+    }
+
+    public Map<String, Object> getReactivosRequeridos() {
+        return reactivosRequeridos;
+    }
+
+    public void setReactivosRequeridos(Map<String, Object> reactivosRequeridos) {
+        this.reactivosRequeridos = reactivosRequeridos;
     }
 
     public BigDecimal getDuracionEstimadaHoras() {

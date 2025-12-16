@@ -45,6 +45,12 @@ public class AnalisisCreateDTO {
     @Schema(description = "Equipos requeridos para el análisis en formato JSON")
     private Map<String, Object> equiposRequeridos;
 
+    @Schema(description = "Insumos requeridos para el análisis en formato JSON")
+    private Map<String, Object> insumosRequeridos;
+
+    @Schema(description = "Reactivos requeridos para el análisis en formato JSON")
+    private Map<String, Object> reactivosRequeridos;
+
     @DecimalMin(value = "0.0", inclusive = false, message = "La duración debe ser mayor a 0")
     @Digits(integer = 3, fraction = 2, message = "La duración debe tener máximo 3 enteros y 2 decimales")
     @Schema(description = "Duración estimada en horas", example = "2.5")
@@ -133,6 +139,22 @@ public class AnalisisCreateDTO {
 
     public void setEquiposRequeridos(Map<String, Object> equiposRequeridos) {
         this.equiposRequeridos = equiposRequeridos;
+    }
+
+    public Map<String, Object> getInsumosRequeridos() {
+        return insumosRequeridos;
+    }
+
+    public void setInsumosRequeridos(Map<String, Object> insumosRequeridos) {
+        this.insumosRequeridos = insumosRequeridos;
+    }
+
+    public Map<String, Object> getReactivosRequeridos() {
+        return reactivosRequeridos;
+    }
+
+    public void setReactivosRequeridos(Map<String, Object> reactivosRequeridos) {
+        this.reactivosRequeridos = reactivosRequeridos;
     }
 
     public BigDecimal getDuracionEstimadaHoras() {

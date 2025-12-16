@@ -164,6 +164,8 @@ public class AnalisisService {
         dto.setTiposMuestraAplicables(analisis.getTiposMuestraAplicables());
         dto.setParametrosMedir(analisis.getParametrosMedir());
         dto.setEquiposRequeridos(analisis.getEquiposRequeridos());
+        dto.setInsumosRequeridos(analisis.getInsumosRequeridos());
+        dto.setReactivosRequeridos(analisis.getReactivosRequeridos());
         dto.setDuracionEstimadaHoras(analisis.getDuracionEstimadaHoras());
         dto.setPrecioClp(analisis.getPrecioClp());
         dto.setDiasEntrega(analisis.getDiasEntrega());
@@ -185,6 +187,8 @@ public class AnalisisService {
         analisis.setTiposMuestraAplicables(dto.getTiposMuestraAplicables());
         analisis.setParametrosMedir(dto.getParametrosMedir());
         analisis.setEquiposRequeridos(dto.getEquiposRequeridos());
+        analisis.setInsumosRequeridos(dto.getInsumosRequeridos());
+        analisis.setReactivosRequeridos(dto.getReactivosRequeridos());
         analisis.setDuracionEstimadaHoras(dto.getDuracionEstimadaHoras());
         analisis.setPrecioClp(dto.getPrecioClp());
         analisis.setDiasEntrega(dto.getDiasEntrega());

@@ -51,6 +51,14 @@ public class Analisis {
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, Object> equiposRequeridos;
 
+    @Column(name = "insumos_requeridos", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Object> insumosRequeridos;
+
+    @Column(name = "reactivos_requeridos", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Object> reactivosRequeridos;
+
     @Column(name = "duracion_estimada_horas", precision = 5, scale = 2)
     private BigDecimal duracionEstimadaHoras;
 
@@ -152,6 +160,22 @@ public class Analisis {
 
     public void setEquiposRequeridos(Map<String, Object> equiposRequeridos) {
         this.equiposRequeridos = equiposRequeridos;
+    }
+
+    public Map<String, Object> getInsumosRequeridos() {
+        return insumosRequeridos;
+    }
+
+    public void setInsumosRequeridos(Map<String, Object> insumosRequeridos) {
+        this.insumosRequeridos = insumosRequeridos;
+    }
+
+    public Map<String, Object> getReactivosRequeridos() {
+        return reactivosRequeridos;
+    }
+
+    public void setReactivosRequeridos(Map<String, Object> reactivosRequeridos) {
+        this.reactivosRequeridos = reactivosRequeridos;
     }
 
     public BigDecimal getDuracionEstimadaHoras() {
