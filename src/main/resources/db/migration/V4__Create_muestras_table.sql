@@ -13,7 +13,7 @@ CREATE TABLE muestras (
     
     -- Tipo y características de la muestra
     tipo_muestra VARCHAR(100) NOT NULL,
-    prioridad VARCHAR(20) DEFAULT 'Normal' CHECK (prioridad IN ('Baja', 'Normal', 'Alta', 'Urgente')),
+    prioridad VARCHAR(20) DEFAULT 'MEDIA' CHECK (prioridad IN ('BAJA', 'MEDIA', 'ALTA')),
     
     -- Condiciones de transporte
     temperatura_transporte DECIMAL(5,2),
@@ -26,7 +26,7 @@ CREATE TABLE muestras (
     recibida_por VARCHAR(255),
     
     -- Estado de la muestra
-    estado VARCHAR(50) DEFAULT 'Recibida' CHECK (estado IN ('Recibida', 'En Proceso', 'Analizada', 'Entregada', 'Rechazada')),
+    estado VARCHAR(50) DEFAULT 'RECIBIDA' CHECK (estado IN ('RECIBIDA', 'EN_PROCESO', 'ANALIZADA', 'COMPLETADA', 'RECHAZADA')),
     
     -- Observaciones
     observaciones TEXT,
@@ -46,7 +46,7 @@ CREATE TABLE muestra_analisis (
     id_analisis UUID NOT NULL,
     
     -- Estado específico del análisis para esta muestra
-    estado_analisis VARCHAR(50) DEFAULT 'Pendiente' CHECK (estado_analisis IN ('Pendiente', 'En Proceso', 'Completado', 'Cancelado')),
+    estado_analisis VARCHAR(50) DEFAULT 'PENDIENTE' CHECK (estado_analisis IN ('PENDIENTE', 'EN_PROCESO', 'COMPLETADO', 'CANCELADO')),
     
     -- Orden de ejecución de los análisis
     orden_ejecucion INTEGER DEFAULT 1,
@@ -170,7 +170,7 @@ CREATE TABLE muestra_plantilla (
     id_plantilla UUID NOT NULL,
     
     -- Estado específico de la plantilla para esta muestra
-    estado_plantilla VARCHAR(50) DEFAULT 'Pendiente' CHECK (estado_plantilla IN ('Pendiente', 'En Proceso', 'Completada', 'Cancelada')),
+    estado_plantilla VARCHAR(50) DEFAULT 'PENDIENTE' CHECK (estado_plantilla IN ('PENDIENTE', 'EN_PROCESO', 'COMPLETADA', 'CANCELADA')),
     
     -- Orden de ejecución de las plantillas
     orden_ejecucion INTEGER DEFAULT 1 CHECK (orden_ejecucion > 0),
