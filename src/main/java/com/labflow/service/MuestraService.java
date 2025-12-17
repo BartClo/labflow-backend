@@ -48,9 +48,48 @@ public class MuestraService {
     }
 
     /**
+     * Generar código único para la muestra con formato M-AAAA-Correlativo
+     * Ejemplo: M-2025-0001, M-2025-0002, etc.
+     */
+    private String generarCodigoUnico() {
+        // Obtener año actual
+        int anioActual = LocalDateTime.now().getYear();
+        String prefijo = "M-" + anioActual + "-";
+        
+        // Buscar última muestra del año
+        Optional<Muestra> ultimaMuestra = muestraRepository
+                .findTopByNumeroInternoStartingWithOrderByNumeroInternoDesc(prefijo);
+        
+        int nuevoCorrelativo = 1;
+        
+        if (ultimaMuestra.isPresent()) {
+            // Extraer el correlativo del último código (ej: M-2025-0045 -> 45)
+            String ultimoCodigo = ultimaMuestra.get().getNumeroInterno();
+            String[] partes = ultimoCodigo.split("-");
+            if (partes.length == 3) {
+                try {
+                    int ultimoCorrelativo = Integer.parseInt(partes[2]);
+                    nuevoCorrelativo = ultimoCorrelativo + 1;
+                } catch (NumberFormatException e) {
+                    // Si hay error al parsear, iniciar en 1
+                    nuevoCorrelativo = 1;
+                }
+            }
+        }
+        
+        // Formatear con 4 dígitos (0001, 0002, etc.)
+        return String.format("%s%04d", prefijo, nuevoCorrelativo);
+    }
+
+    /**
      * Crear una nueva muestra con sus análisis y/o plantillas asociados
      */
     public MuestraDTO crearMuestra(MuestraCreateDTO createDTO) {
+        // Generar código único si no se proporciona
+        if (createDTO.getNumeroInterno() == null || createDTO.getNumeroInterno().trim().isEmpty()) {
+            createDTO.setNumeroInterno(generarCodigoUnico());
+        }
+        
         // Validaciones
         validarDatosCreacion(createDTO);
 
@@ -301,9 +340,11 @@ public class MuestraService {
     // Métodos privados auxiliares
 
     private void validarDatosCreacion(MuestraCreateDTO createDTO) {
-        // Validar número interno único
-        if (muestraRepository.existsByNumeroInterno(createDTO.getNumeroInterno())) {
-            throw new ValidationException("Ya existe una muestra con el número interno: " + createDTO.getNumeroInterno());
+        // Validar número interno único solo si fue proporcionado manualmente
+        if (createDTO.getNumeroInterno() != null && !createDTO.getNumeroInterno().trim().isEmpty()) {
+            if (muestraRepository.existsByNumeroInterno(createDTO.getNumeroInterno())) {
+                throw new ValidationException("Ya existe una muestra con el número interno: " + createDTO.getNumeroInterno());
+            }
         }
 
         // Validar código de barras único si se proporciona

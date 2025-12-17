@@ -23,6 +23,9 @@ public interface MuestraRepository extends JpaRepository<Muestra, UUID> {
     // Búsquedas básicas
     Optional<Muestra> findByNumeroInterno(String numeroInterno);
     
+    // Buscar última muestra por prefijo de año para generar código correlativo
+    Optional<Muestra> findTopByNumeroInternoStartingWithOrderByNumeroInternoDesc(String prefijo);
+    
     Optional<Muestra> findByCodigoBarras(String codigoBarras);
     
     List<Muestra> findByClienteIdCliente(UUID idCliente);

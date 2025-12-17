@@ -21,8 +21,7 @@ public class Muestra {
     @Column(name = "id_muestra")
     private UUID idMuestra;
 
-    @Column(name = "numero_interno", nullable = false, length = 100, unique = true)
-    @NotBlank(message = "El número interno es requerido")
+    @Column(name = "numero_interno", nullable = true, length = 100, unique = true)
     @Size(max = 100, message = "El número interno no puede exceder 100 caracteres")
     private String numeroInterno;
 

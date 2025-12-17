@@ -44,7 +44,7 @@ public class MuestraController {
     @Operation(summary = "Crear nueva muestra", 
                description = "Crea una nueva muestra con sus análisis asociados")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Muestra creada exitosamente",
+        @ApiResponse(responseCode = "200", description = "Muestra creada exitosamente",
                     content = @Content(mediaType = "application/json", 
                                      schema = @Schema(implementation = MuestraDTO.class))),
         @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
@@ -55,7 +55,7 @@ public class MuestraController {
     public ResponseEntity<MuestraDTO> crearMuestra(
             @Valid @RequestBody MuestraCreateDTO createDTO) {
         MuestraDTO muestra = muestraService.crearMuestra(createDTO);
-        return new ResponseEntity<>(muestra, HttpStatus.CREATED);
+        return new ResponseEntity<>(muestra, HttpStatus.OK);
     }
 
     @Operation(summary = "Obtener muestra por ID", 

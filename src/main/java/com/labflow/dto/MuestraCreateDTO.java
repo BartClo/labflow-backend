@@ -14,7 +14,6 @@ import java.util.UUID;
  */
 public class MuestraCreateDTO {
 
-    @NotBlank(message = "El número interno es requerido")
     @Size(max = 100, message = "El número interno no puede exceder 100 caracteres")
     @JsonProperty("numero_interno")
     private String numeroInterno;
