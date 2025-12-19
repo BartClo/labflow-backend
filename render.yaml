@@ -2,8 +2,6 @@ services:
   # PostgreSQL Database
   - type: pserv
     name: labflow-db-IgnacioS
-    databaseName: labflow_db_ignacios
-    user: labflow_db_ignacios_user
     plan: free
     region: virginia
     ipAllowList:
