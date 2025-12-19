@@ -10,6 +10,7 @@ services:
     name: labflow-backend
     region: virginia
     plan: free
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: JAVA_OPTS
         value: "-Xmx512m -Xms256m"
