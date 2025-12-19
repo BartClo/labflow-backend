@@ -2,12 +2,10 @@ services:
   # PostgreSQL Database
   - type: pserv
     name: labflow-db-IgnacioS
-    env: docker
+    databaseName: labflow_db_ignacios
+    user: labflow_db_ignacios_user
     plan: free
     region: virginia
-    databases:
-      - name: labflow_db_ignacios
-        user: labflow_db_ignacios_user
     ipAllowList:
       - source: 0.0.0.0/0
         description: everywhere
