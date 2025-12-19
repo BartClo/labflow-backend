@@ -8,7 +8,6 @@ services:
   # Spring Boot Backend
   - type: web
     name: labflow-backend
-    runtime: docker
     region: virginia
     plan: free
     envVars:
