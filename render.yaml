@@ -25,10 +25,18 @@ projects:
         value: "-Xmx512m -Xms256m"
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: DATABASE_URL
+      - key: DB_HOST
         fromDatabase:
           name: labflow-db-IgnacioS
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: labflow-db-IgnacioS
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: labflow-db-IgnacioS
+          property: database
       - key: DB_USERNAME
         fromDatabase:
           name: labflow-db-IgnacioS
