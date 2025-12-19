@@ -2,6 +2,7 @@ package com.labflow.controller;
 
 import com.labflow.dto.MuestraCreateDTO;
 import com.labflow.dto.MuestraDTO;
+import com.labflow.dto.MuestraPageResponse;
 import com.labflow.service.MuestraService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -91,12 +93,14 @@ public class MuestraController {
     @Operation(summary = "Listar todas las muestras", 
                description = "Obtiene una lista paginada de todas las muestras")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Lista de muestras obtenida exitosamente")
+        @ApiResponse(responseCode = "200", description = "Lista de muestras obtenida exitosamente",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MuestraPageResponse.class)))
     })
     @GetMapping
     public ResponseEntity<Page<MuestraDTO>> listarMuestras(
+            @ParameterObject
             @PageableDefault(size = 20, sort = "fechaCreacion", direction = Sort.Direction.DESC)
-            @Parameter(description = "Parámetros de paginación (page, size, sort)")
             Pageable pageable) {
         Page<MuestraDTO> muestras = muestraService.listarMuestras(pageable);
         return ResponseEntity.ok(muestras);
@@ -105,7 +109,9 @@ public class MuestraController {
     @Operation(summary = "Buscar muestras", 
                description = "Busca muestras usando múltiples criterios de filtrado")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MuestraPageResponse.class)))
     })
     @GetMapping("/buscar")
     public ResponseEntity<Page<MuestraDTO>> buscarMuestras(
@@ -128,6 +134,7 @@ public class MuestraController {
             @RequestParam(required = false) 
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin,
             
+            @ParameterObject
             @PageableDefault(size = 20, sort = "fechaCreacion", direction = Sort.Direction.DESC)
             Pageable pageable) {
         
@@ -139,13 +146,16 @@ public class MuestraController {
     @Operation(summary = "Búsqueda de texto libre", 
                description = "Busca muestras por texto en campos principales")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente",
+                content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = MuestraPageResponse.class)))
     })
     @GetMapping("/buscar-texto")
     public ResponseEntity<Page<MuestraDTO>> buscarPorTexto(
             @Parameter(description = "Texto a buscar en los campos de la muestra")
             @RequestParam String texto,
             
+            @ParameterObject
             @PageableDefault(size = 20, sort = "fechaCreacion", direction = Sort.Direction.DESC)
             Pageable pageable) {
         
@@ -243,13 +253,16 @@ public class MuestraController {
     @Operation(summary = "Obtener muestras de cliente", 
                description = "Obtiene todas las muestras asociadas a un cliente específico")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Muestras del cliente obtenidas exitosamente")
+        @ApiResponse(responseCode = "200", description = "Muestras del cliente obtenidas exitosamente",
+                    content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MuestraPageResponse.class)))
     })
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<Page<MuestraDTO>> obtenerMuestrasCliente(
             @Parameter(description = "ID único del cliente") 
             @PathVariable UUID clienteId,
             
+            @ParameterObject
             @PageableDefault(size = 20, sort = "fechaCreacion", direction = Sort.Direction.DESC)
             Pageable pageable) {
         Page<MuestraDTO> muestras = muestraService.obtenerMuestrasCliente(clienteId, pageable);

@@ -4,6 +4,7 @@ import com.labflow.model.Muestra;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,7 @@ import java.util.UUID;
  * Incluye consultas personalizadas para búsquedas avanzadas
  */
 @Repository
-public interface MuestraRepository extends JpaRepository<Muestra, UUID> {
+public interface MuestraRepository extends JpaRepository<Muestra, UUID>, JpaSpecificationExecutor<Muestra> {
 
     // Búsquedas básicas
     Optional<Muestra> findByNumeroInterno(String numeroInterno);
@@ -47,21 +48,6 @@ public interface MuestraRepository extends JpaRepository<Muestra, UUID> {
     List<Muestra> findByFechaRecepcionBetween(LocalDateTime inicio, LocalDateTime fin);
     
     List<Muestra> findByFechaCreacionBetween(LocalDateTime inicio, LocalDateTime fin);
-
-    // Búsquedas con múltiples criterios
-    @Query("SELECT m FROM Muestra m WHERE " +
-           "(:clienteId IS NULL OR m.cliente.idCliente = :clienteId) AND " +
-           "(:estado IS NULL OR m.estado = :estado) AND " +
-           "(:prioridad IS NULL OR m.prioridad = :prioridad) AND " +
-           "(:fechaInicio IS NULL OR m.fechaMuestreo >= :fechaInicio) AND " +
-           "(:fechaFin IS NULL OR m.fechaMuestreo <= :fechaFin)")
-    Page<Muestra> findByMultiplesCriterios(
-            @Param("clienteId") UUID clienteId,
-            @Param("estado") Muestra.EstadoMuestra estado,
-            @Param("prioridad") Muestra.Prioridad prioridad,
-            @Param("fechaInicio") LocalDateTime fechaInicio,
-            @Param("fechaFin") LocalDateTime fechaFin,
-            Pageable pageable);
 
     // Búsqueda de texto libre
     @Query("SELECT m FROM Muestra m WHERE " +

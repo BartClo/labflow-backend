@@ -3,6 +3,7 @@ package com.labflow.dto;
 import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,16 +36,19 @@ public class MuestraCreateDTO {
     @JsonProperty("tipo_muestra")
     private String tipoMuestra;
 
-    @Pattern(regexp = "ALTA|MEDIA|BAJA", message = "La prioridad debe ser ALTA, MEDIA o BAJA")
+    @Pattern(regexp = "(?i)ALTA|MEDIA|BAJA", message = "La prioridad debe ser ALTA, MEDIA o BAJA")
+    @Schema(description = "Prioridad de la muestra", example = "MEDIA")
     @JsonProperty("prioridad")
     private String prioridad = "MEDIA";
 
     @JsonProperty("fecha_muestreo")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss[XXX]")
+    @Schema(description = "Fecha y hora de muestreo en formato ISO-8601", example = "2025-01-15T14:30:00Z")
     private LocalDateTime fechaMuestreo;
 
     @JsonProperty("fecha_recepcion")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss[XXX]")
+    @Schema(description = "Fecha y hora de recepción en formato ISO-8601", example = "2025-01-15T16:00:00Z")
     private LocalDateTime fechaRecepcion;
 
     @Size(max = 255, message = "El responsable del muestreo no puede exceder 255 caracteres")
@@ -77,8 +81,9 @@ public class MuestraCreateDTO {
     @JsonProperty("observaciones")
     private String observaciones;
 
-    @Pattern(regexp = "RECIBIDA|EN_PROCESO|ANALIZADA|COMPLETADA|RECHAZADA", 
+    @Pattern(regexp = "(?i)RECIBIDA|EN_PROCESO|ANALIZADA|COMPLETADA|RECHAZADA", 
              message = "El estado debe ser RECIBIDA, EN_PROCESO, ANALIZADA, COMPLETADA o RECHAZADA")
+    @Schema(description = "Estado inicial de la muestra", example = "RECIBIDA")
     @JsonProperty("estado")
     private String estado = "RECIBIDA";
 

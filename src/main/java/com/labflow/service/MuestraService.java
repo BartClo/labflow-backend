@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -157,11 +158,14 @@ public class MuestraService {
     public Page<MuestraDTO> buscarMuestras(UUID clienteId, String estado, String prioridad, 
                                           LocalDateTime fechaInicio, LocalDateTime fechaFin, 
                                           Pageable pageable) {
-        Muestra.EstadoMuestra estadoEnum = estado != null ? Muestra.EstadoMuestra.valueOf(estado) : null;
-        Muestra.Prioridad prioridadEnum = prioridad != null ? Muestra.Prioridad.valueOf(prioridad) : null;
+        // Parsear enums desde strings
+        Muestra.EstadoMuestra estadoEnum = parseEstado(estado);
+        Muestra.Prioridad prioridadEnum = parsePrioridad(prioridad);
 
-        Page<Muestra> muestras = muestraRepository.findByMultiplesCriterios(
-                clienteId, estadoEnum, prioridadEnum, fechaInicio, fechaFin, pageable);
+        // Usar Specification para búsqueda dinámica
+        Page<Muestra> muestras = muestraRepository.findAll(
+                MuestraSpecification.buscarPorCriterios(clienteId, estadoEnum, prioridadEnum, fechaInicio, fechaFin),
+                pageable);
         
         return muestras.map(this::convertirADTO);
     }
@@ -208,7 +212,7 @@ public class MuestraService {
         Muestra muestra = muestraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(MUESTRA_NO_ENCONTRADA + id));
 
-        Muestra.EstadoMuestra estadoEnum = Muestra.EstadoMuestra.valueOf(nuevoEstado);
+        Muestra.EstadoMuestra estadoEnum = parseEstado(nuevoEstado);
         muestra.setEstado(estadoEnum);
 
         // Lógica adicional según el estado
@@ -341,10 +345,9 @@ public class MuestraService {
 
     private void validarDatosCreacion(MuestraCreateDTO createDTO) {
         // Validar número interno único solo si fue proporcionado manualmente
-        if (createDTO.getNumeroInterno() != null && !createDTO.getNumeroInterno().trim().isEmpty()) {
-            if (muestraRepository.existsByNumeroInterno(createDTO.getNumeroInterno())) {
-                throw new ValidationException("Ya existe una muestra con el número interno: " + createDTO.getNumeroInterno());
-            }
+        if (createDTO.getNumeroInterno() != null && !createDTO.getNumeroInterno().trim().isEmpty() &&
+            muestraRepository.existsByNumeroInterno(createDTO.getNumeroInterno())) {
+            throw new ValidationException("Ya existe una muestra con el número interno: " + createDTO.getNumeroInterno());
         }
 
         // Validar código de barras único si se proporciona
@@ -381,12 +384,14 @@ public class MuestraService {
         muestra.setPuntoMuestreo(dto.getPuntoMuestreo());
         muestra.setTipoMuestra(dto.getTipoMuestra());
         
-        if (dto.getPrioridad() != null) {
-            muestra.setPrioridad(Muestra.Prioridad.valueOf(dto.getPrioridad()));
+        Muestra.Prioridad prioridad = parsePrioridad(dto.getPrioridad());
+        if (prioridad != null) {
+            muestra.setPrioridad(prioridad);
         }
-        
-        if (dto.getEstado() != null) {
-            muestra.setEstado(Muestra.EstadoMuestra.valueOf(dto.getEstado()));
+
+        Muestra.EstadoMuestra estado = parseEstado(dto.getEstado());
+        if (estado != null) {
+            muestra.setEstado(estado);
         }
 
         muestra.setFechaMuestreo(dto.getFechaMuestreo());
@@ -675,5 +680,27 @@ public class MuestraService {
         }
 
         return muestraPlantillaRepository.save(muestraPlantilla);
+    }
+
+    private Muestra.Prioridad parsePrioridad(String prioridadRaw) {
+        if (prioridadRaw == null || prioridadRaw.isBlank()) {
+            return null;
+        }
+        try {
+            return Muestra.Prioridad.valueOf(prioridadRaw.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new ValidationException("La prioridad debe ser ALTA, MEDIA o BAJA");
+        }
+    }
+
+    private Muestra.EstadoMuestra parseEstado(String estadoRaw) {
+        if (estadoRaw == null || estadoRaw.isBlank()) {
+            return null;
+        }
+        try {
+            return Muestra.EstadoMuestra.valueOf(estadoRaw.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new ValidationException("El estado debe ser RECIBIDA, EN_PROCESO, ANALIZADA, COMPLETADA o RECHAZADA");
+        }
     }
 }
