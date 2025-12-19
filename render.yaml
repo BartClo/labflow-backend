@@ -1,19 +1,22 @@
 services:
   # PostgreSQL Database
   - type: pserv
-    name: labflow-db
+    name: labflow-db-IgnacioS
     env: docker
     plan: free
-    region: oregon
+    region: virginia
     databases:
-      - name: labflow_db
-        user: labflow_user
+      - name: labflow_db_ignacios
+        user: labflow_db_ignacios_user
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
 
   # Spring Boot Backend
   - type: web
     name: labflow-backend
     env: java
-    region: oregon
+    region: virginia
     plan: free
     buildCommand: chmod +x ./mvnw && ./mvnw clean package -DskipTests
     startCommand: java -Dserver.port=$PORT -jar target/labflow-backend-0.0.1-SNAPSHOT.jar
@@ -23,23 +26,19 @@ services:
         value: "-Xmx512m -Xms256m"
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: DB_URL
+      - key: DATABASE_URL
         fromDatabase:
-          name: labflow-db
+          name: labflow-db-IgnacioS
           property: connectionString
       - key: DB_USERNAME
         fromDatabase:
-          name: labflow-db
+          name: labflow-db-IgnacioS
           property: user
       - key: DB_PASSWORD
         fromDatabase:
-          name: labflow-db
+          name: labflow-db-IgnacioS
           property: password
-      - key: SERVER_PORT
-        value: 8080
       - key: SWAGGER_ENABLED
-        value: true
+        value: "true"
       - key: LOG_LEVEL
         value: INFO
-      - key: SQL_LOG_LEVEL
-        value: WARN
