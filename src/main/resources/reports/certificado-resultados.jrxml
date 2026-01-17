@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports 
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="certificado-resultados" pageWidth="595" pageHeight="842" 
+              columnWidth="515" leftMargin="40" rightMargin="40" 
+              topMargin="40" bottomMargin="40" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688262">
+    
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    
+    <!-- Parameters -->
+    <parameter name="logoPath" class="java.lang.String"/>
+    <parameter name="ordenTrabajoId" class="java.lang.String"/>
+    <parameter name="fechaEmision" class="java.lang.String"/>
+    <parameter name="tecnicoNombre" class="java.lang.String"/>
+    <parameter name="clienteNombre" class="java.lang.String"/>
+    <parameter name="clienteDireccion" class="java.lang.String"/>
+    <parameter name="clienteRut" class="java.lang.String"/>
+    <parameter name="numeroMuestra" class="java.lang.String"/>
+    
+    <!-- Fields from DataSource -->
+    <field name="parametro" class="java.lang.String"/>
+    <field name="valor" class="java.lang.String"/>
+    <field name="unidad" class="java.lang.String"/>
+    <field name="limiteNormativo" class="java.lang.String"/>
+    <field name="cumpleNormativa" class="java.lang.Boolean"/>
+    
+    <!-- Title Band -->
+    <title>
+        <band height="120" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="70" width="515" height="30" uuid="title-uuid"/>
+                <textElement textAlignment="Center">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <text><![CDATA[CERTIFICADO DE RESULTADOS DE ANÁLISIS]]></text>
+            </staticText>
+            
+            <textField>
+                <reportElement x="0" y="100" width="515" height="20" uuid="ot-id-uuid"/>
+                <textElement textAlignment="Center">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Orden de Trabajo N° " + $P{ordenTrabajoId}]]></textFieldExpression>
+            </textField>
+            
+            <!-- Placeholder for logo (when available) -->
+            <staticText>
+                <reportElement x="0" y="10" width="200" height="50" uuid="logo-placeholder-uuid"/>
+                <box>
+                    <pen lineWidth="1.0" lineStyle="Dashed"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="12"/>
+                </textElement>
+                <text><![CDATA[LOGO LABFLOW]]></text>
+            </staticText>
+            
+            <textField>
+                <reportElement x="350" y="10" width="165" height="20" uuid="fecha-uuid"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Fecha: " + $P{fechaEmision}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <!-- Page Header Band -->
+    <pageHeader>
+        <band height="100" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="10" width="515" height="20" uuid="cliente-header-uuid"/>
+                <textElement>
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DATOS DEL CLIENTE]]></text>
+            </staticText>
+            
+            <textField>
+                <reportElement x="0" y="35" width="400" height="15" uuid="cliente-nombre-uuid"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Cliente: " + $P{clienteNombre}]]></textFieldExpression>
+            </textField>
+            
+            <textField isBlankWhenNull="true">
+                <reportElement x="0" y="50" width="400" height="15" uuid="cliente-direccion-uuid"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Dirección: " + ($P{clienteDireccion} != null ? $P{clienteDireccion} : "N/A")]]></textFieldExpression>
+            </textField>
+            
+            <textField isBlankWhenNull="true">
+                <reportElement x="0" y="65" width="400" height="15" uuid="cliente-rut-uuid"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["RUT: " + ($P{clienteRut} != null ? $P{clienteRut} : "N/A")]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="0" y="80" width="400" height="15" uuid="muestra-numero-uuid"/>
+                <textElement>
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Muestra N°: " + $P{numeroMuestra}]]></textFieldExpression>
+            </textField>
+            
+            <line>
+                <reportElement x="0" y="98" width="515" height="1" uuid="separator-line-uuid"/>
+            </line>
+        </band>
+    </pageHeader>
+    
+    <!-- Column Header Band -->
+    <columnHeader>
+        <band height="30" splitType="Stretch">
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="0" width="150" height="30" backcolor="#E0E0E0" uuid="header-parametro-uuid"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Parámetro]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement mode="Opaque" x="150" y="0" width="100" height="30" backcolor="#E0E0E0" uuid="header-valor-uuid"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Valor]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement mode="Opaque" x="250" y="0" width="80" height="30" backcolor="#E0E0E0" uuid="header-unidad-uuid"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Unidad]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement mode="Opaque" x="330" y="0" width="100" height="30" backcolor="#E0E0E0" uuid="header-limite-uuid"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Límite NCh409]]></text>
+            </staticText>
+            
+            <staticText>
+                <reportElement mode="Opaque" x="430" y="0" width="85" height="30" backcolor="#E0E0E0" uuid="header-cumple-uuid"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Cumple]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <!-- Detail Band -->
+    <detail>
+        <band height="25" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="150" height="25" uuid="detail-parametro-uuid"/>
+                <box leftPadding="5">
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{parametro}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="150" y="0" width="100" height="25" uuid="detail-valor-uuid">
+                    <printWhenExpression><![CDATA[$F{cumpleNormativa} == true]]></printWhenExpression>
+                </reportElement>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+            </textField>
+            
+            <!-- Valor en NEGRITA si NO cumple normativa -->
+            <textField>
+                <reportElement x="150" y="0" width="100" height="25" uuid="detail-valor-bold-uuid">
+                    <printWhenExpression><![CDATA[$F{cumpleNormativa} == false]]></printWhenExpression>
+                </reportElement>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{valor} + " *"]]></textFieldExpression>
+            </textField>
+            
+            <textField isBlankWhenNull="true">
+                <reportElement x="250" y="0" width="80" height="25" uuid="detail-unidad-uuid"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{unidad}]]></textFieldExpression>
+            </textField>
+            
+            <textField isBlankWhenNull="true">
+                <reportElement x="330" y="0" width="100" height="25" uuid="detail-limite-uuid"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{limiteNormativo}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="430" y="0" width="85" height="25" uuid="detail-cumple-uuid"/>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{cumpleNormativa} ? "SÍ" : "NO"]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    
+    <!-- Page Footer Band -->
+    <pageFooter>
+        <band height="80" splitType="Stretch">
+            <line>
+                <reportElement x="0" y="5" width="515" height="1" uuid="footer-separator-uuid"/>
+            </line>
+            
+            <staticText>
+                <reportElement x="0" y="15" width="515" height="15" uuid="nota-asterisco-uuid"/>
+                <textElement>
+                    <font size="8" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[(*) Valores marcados con asterisco NO cumplen con la normativa NCh 409]]></text>
+            </staticText>
+            
+            <textField>
+                <reportElement x="0" y="40" width="300" height="15" uuid="tecnico-uuid"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Técnico Responsable: " + $P{tecnicoNombre}]]></textFieldExpression>
+            </textField>
+            
+            <textField>
+                <reportElement x="400" y="65" width="115" height="15" uuid="page-number-uuid"/>
+                <textElement textAlignment="Right">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>
