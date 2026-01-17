@@ -36,6 +36,11 @@ public class MuestraAnalisis {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Analisis analisis;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "orden_trabajo_id", nullable = true)
+    @JsonBackReference("ordenTrabajo-tareas")
+    private OrdenTrabajo ordenTrabajo;
+
     // Estado específico del análisis para esta muestra
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_analisis", length = 50)
@@ -238,6 +243,14 @@ public class MuestraAnalisis {
 
     public void setNotasValidacion(String notasValidacion) {
         this.notasValidacion = notasValidacion;
+    }
+
+    public OrdenTrabajo getOrdenTrabajo() {
+        return ordenTrabajo;
+    }
+
+    public void setOrdenTrabajo(OrdenTrabajo ordenTrabajo) {
+        this.ordenTrabajo = ordenTrabajo;
     }
 
     // Métodos de utilidad
