@@ -1,6 +1,7 @@
 package com.labflow.repository;
 
 import com.labflow.model.MuestraAnalisis;
+import com.labflow.model.OrdenTrabajo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -174,4 +175,56 @@ public interface MuestraAnalisisRepository extends JpaRepository<MuestraAnalisis
     void deleteByMuestraIdMuestra(UUID idMuestra);
     
     void deleteByMuestraIdMuestraAndAnalisisIdAnalisis(UUID idMuestra, UUID idAnalisis);
+
+    // ============================================================================
+    // Consultas para Órdenes de Trabajo
+    // ============================================================================
+
+    /**
+     * Encuentra tareas pendientes sin orden de trabajo asignada
+     */
+    @Query("SELECT ma FROM MuestraAnalisis ma " +
+           "WHERE ma.estadoAnalisis = 'PENDIENTE' " +
+           "AND ma.ordenTrabajo IS NULL " +
+           "ORDER BY ma.muestra.prioridad DESC, ma.fechaAgregado ASC")
+    List<MuestraAnalisis> findTareasPendientesSinOrden();
+
+    /**
+     * Encuentra tareas pendientes sin orden de trabajo para un análisis específico
+     */
+    @Query("SELECT ma FROM MuestraAnalisis ma " +
+           "WHERE ma.estadoAnalisis = 'PENDIENTE' " +
+           "AND ma.ordenTrabajo IS NULL " +
+           "AND ma.analisis.idAnalisis = :analisisId " +
+           "ORDER BY ma.muestra.prioridad DESC, ma.fechaAgregado ASC")
+    List<MuestraAnalisis> findTareasPendientesSinOrdenByAnalisis(@Param("analisisId") UUID analisisId);
+
+    /**
+     * Encuentra todas las tareas de una orden de trabajo
+     */
+    List<MuestraAnalisis> findByOrdenTrabajo(OrdenTrabajo ordenTrabajo);
+
+    /**
+     * Encuentra tareas por ID de orden de trabajo
+     */
+    @Query("SELECT ma FROM MuestraAnalisis ma WHERE ma.ordenTrabajo.id = :ordenTrabajoId")
+    List<MuestraAnalisis> findByOrdenTrabajoId(@Param("ordenTrabajoId") UUID ordenTrabajoId);
+
+    /**
+     * Cuenta tareas pendientes en una orden de trabajo
+     */
+    @Query("SELECT COUNT(ma) FROM MuestraAnalisis ma " +
+           "WHERE ma.ordenTrabajo.id = :ordenTrabajoId " +
+           "AND ma.estadoAnalisis = 'PENDIENTE'")
+    Long countTareasPendientesByOrdenTrabajo(@Param("ordenTrabajoId") UUID ordenTrabajoId);
+
+    /**
+     * Cuenta tareas por orden de trabajo y estado
+     */
+    @Query("SELECT COUNT(ma) FROM MuestraAnalisis ma " +
+           "WHERE ma.ordenTrabajo = :ordenTrabajo " +
+           "AND ma.estadoAnalisis = :estado")
+    Long countByOrdenTrabajoAndEstadoAnalisis(
+            @Param("ordenTrabajo") OrdenTrabajo ordenTrabajo,
+            @Param("estado") MuestraAnalisis.EstadoAnalisis estado);
 }
