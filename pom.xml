@@ -6,18 +6,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
+        <version>3.4.2</version>
         <relativePath/>
     </parent>
     
     <groupId>com.labflow</groupId>
     <artifactId>labflow-backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>labflow-backend</name>
-    <description>LabFlow Backend - Sistema completo de gestión de laboratorio con Spring Boot</description>
-    <url>https://github.com/BartClo/labflow-backend</url>
-    
-    <developers>
+        <version>0.0.1-SNAPSHOT</version>
+        <name>labflow-backend</name>
+        <description>LabFlow Backend - Sistema completo de gestión de laboratorio con Spring Boot</description>
+        <url>https://github.com/BartClo/labflow-backend</url>
+        
+        <developers>
         <developer>
             <name>LabFlow Team</name>
             <organization>LabFlow</organization>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
+            <version>2.7.0</version>
         </dependency>
         
         <!-- Flyway for Database Migrations -->
@@ -152,21 +152,6 @@
                         <arg>-Xlint:-options</arg>
                         <arg>-Xlint:-processing</arg>
                     </compilerArgs>
-                </configuration>
-            </plugin>
-            
-            <!-- Flyway Maven Plugin -->
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>11.1.0</version>
-                <configuration>
-                    <url>jdbc:postgresql://localhost:5432/labflow_db</url>
-                    <user>labflow_user</user>
-                    <password>labflow_password</password>
-                    <locations>
-                        <location>classpath:db/migration</location>
-                    </locations>
                 </configuration>
             </plugin>
         </plugins>
