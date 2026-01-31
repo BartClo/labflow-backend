@@ -131,6 +131,7 @@ public class TareaService {
         // Actualizar la tarea con los resultados
         tarea.setResultado(resultadoJson);
         tarea.setCumpleNormativa(todoCumpleNormativa);
+        tarea.setCumpleNorma(todoCumpleNormativa);  // Nuevo campo para workflow pull
 
         // Generar notas de validación si hay parámetros que no cumplen
         if (!todoCumpleNormativa) {
@@ -272,5 +273,86 @@ public class TareaService {
         dto.setCliente(clienteDTO);
 
         return dto;
+    }
+
+    /**
+     * Busca una tarea por código de barras QR en estado EN_PROCESO
+     * Incluye los límites normativos del análisis
+     */
+    @Transactional(readOnly = true)
+    public TareaPendienteDTO buscarPorCodigoBarras(String codigoBarras) {
+        logger.info("Buscando tarea por código QR: {}", codigoBarras);
+
+        List<MuestraAnalisis> tareas = muestraAnalisisRepository
+                .findByMuestra_CodigoBarrasAndEstado(codigoBarras);
+
+        if (tareas.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "No se encontró ninguna tarea en proceso para el código: " + codigoBarras);
+        }
+
+        // Retornar la primera (debería ser única por muestra + estado)
+        MuestraAnalisis tarea = tareas.get(0);
+        TareaPendienteDTO dto = convertirATareaPendienteDto(tarea);
+
+        // Agregar límites normativos del análisis
+        UUID analisisId = tarea.getAnalisis().getIdAnalisis();
+        List<Parametro> parametros = parametroRepository.findByAnalisisId(analisisId);
+
+        // Obtener el parámetro principal (si existe)
+        if (!parametros.isEmpty()) {
+            Parametro parametroPrincipal = parametros.get(0);
+            dto.setLimiteMinimoNormativa(parametroPrincipal.getLimiteMinimoNormativa());
+            dto.setLimiteMaximoNormativa(parametroPrincipal.getLimiteMaximoNormativa());
+        }
+
+        dto.setCumpleNorma(tarea.getCumpleNorma());
+
+        return dto;
+    }
+
+    /**
+     * Agrupa tareas pendientes sin OT por nombre de análisis
+     * Retorna un mapa con el conteo: {"pH": 15, "Cloro": 8}
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Long> contarTareasPendientesPorAnalisis() {
+        logger.info("Obteniendo conteo de tareas pendientes agrupadas por análisis");
+
+        List<Object[]> resultados = muestraAnalisisRepository.countTareasPendientesPorAnalisis();
+
+        Map<String, Long> mapa = new HashMap<>();
+        for (Object[] resultado : resultados) {
+            String nombreAnalisis = (String) resultado[0];
+            Long cantidad = (Long) resultado[1];
+            mapa.put(nombreAnalisis, cantidad);
+        }
+
+        logger.info("Se encontraron {} tipos de análisis con tareas pendientes", mapa.size());
+        return mapa;
+    }
+
+    /**
+     * Valida una tarea, cambiando su estado de COMPLETADO a VALIDADO
+     */
+    public void validarTarea(UUID tareaId) {
+        logger.info("Validando tarea: {}", tareaId);
+
+        MuestraAnalisis tarea = muestraAnalisisRepository.findById(tareaId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Tarea no encontrada con ID: " + tareaId));
+
+        // Validar que esté en estado COMPLETADO
+        if (tarea.getEstadoAnalisis() != MuestraAnalisis.EstadoAnalisis.COMPLETADO) {
+            throw new ValidationException(
+                    "Solo se pueden validar tareas en estado COMPLETADO. Estado actual: " 
+                    + tarea.getEstadoAnalisis());
+        }
+
+        // Cambiar a VALIDADO
+        tarea.validar();
+        muestraAnalisisRepository.save(tarea);
+
+        logger.info("Tarea {} validada exitosamente", tareaId);
     }
 }

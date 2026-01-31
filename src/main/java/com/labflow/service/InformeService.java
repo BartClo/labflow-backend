@@ -52,16 +52,14 @@ public class InformeService {
             throw new ValidationException("La orden de trabajo no tiene tareas asignadas");
         }
 
-        // VALIDACIÓN DE BLOQUEO: Verificar que no haya tareas pendientes
-        long tareasPendientes = tareas.stream()
-                .filter(t -> t.getEstadoAnalisis() == MuestraAnalisis.EstadoAnalisis.PENDIENTE)
-                .count();
+        // VALIDACIÓN DE BLOQUEO: Verificar que no haya tareas pendientes o en proceso
+        Long tareasNoFinalizadas = muestraAnalisisRepository.countTareasNoFinalizadasByOrdenTrabajo(ordenTrabajoId);
 
-        if (tareasPendientes > 0) {
+        if (tareasNoFinalizadas > 0) {
             throw new ValidationException(
-                    String.format("No se puede generar el PDF. Hay %d tarea(s) pendiente(s) en esta orden de trabajo. " +
-                            "Todas las tareas deben estar completadas antes de generar el certificado.",
-                            tareasPendientes));
+                    String.format("No se puede generar informe: Existen %d tarea(s) pendientes en esta OT. " +
+                            "Todas las tareas deben estar en estado COMPLETADO o VALIDADO.",
+                            tareasNoFinalizadas));
         }
 
         try {
@@ -172,8 +170,9 @@ public class InformeService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Orden de trabajo no encontrada con ID: " + ordenTrabajoId));
 
-        Long tareasPendientes = muestraAnalisisRepository.countTareasPendientesByOrdenTrabajo(ordenTrabajoId);
+        // Usar el nuevo query que cuenta tareas no finalizadas (ni COMPLETADO ni VALIDADO)
+        Long tareasNoFinalizadas = muestraAnalisisRepository.countTareasNoFinalizadasByOrdenTrabajo(ordenTrabajoId);
 
-        return tareasPendientes == 0;
+        return tareasNoFinalizadas == 0;
     }
 }
