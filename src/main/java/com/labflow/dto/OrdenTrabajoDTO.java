@@ -13,6 +13,9 @@ public class OrdenTrabajoDTO {
     @JsonProperty("id_orden_trabajo")
     private UUID idOrdenTrabajo;
 
+    @JsonProperty("codigo_ot")
+    private String codigoOT;
+
     @JsonProperty("estado")
     private String estado;
 
@@ -48,6 +51,14 @@ public class OrdenTrabajoDTO {
 
     public void setIdOrdenTrabajo(UUID idOrdenTrabajo) {
         this.idOrdenTrabajo = idOrdenTrabajo;
+    }
+
+    public String getCodigoOT() {
+        return codigoOT;
+    }
+
+    public void setCodigoOT(String codigoOT) {
+        this.codigoOT = codigoOT;
     }
 
     public String getEstado() {

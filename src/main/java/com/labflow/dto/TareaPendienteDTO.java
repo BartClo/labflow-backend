@@ -33,6 +33,15 @@ public class TareaPendienteDTO {
     @JsonProperty("cliente")
     private ClienteBasicDTO cliente;
 
+    @JsonProperty("cumple_norma")
+    private Boolean cumpleNorma;
+
+    @JsonProperty("limite_minimo_normativa")
+    private String limiteMinimoNormativa;
+
+    @JsonProperty("limite_maximo_normativa")
+    private String limiteMaximoNormativa;
+
     // Constructores
     public TareaPendienteDTO() {
     }
@@ -100,6 +109,30 @@ public class TareaPendienteDTO {
 
     public void setCliente(ClienteBasicDTO cliente) {
         this.cliente = cliente;
+    }
+
+    public Boolean getCumpleNorma() {
+        return cumpleNorma;
+    }
+
+    public void setCumpleNorma(Boolean cumpleNorma) {
+        this.cumpleNorma = cumpleNorma;
+    }
+
+    public String getLimiteMinimoNormativa() {
+        return limiteMinimoNormativa;
+    }
+
+    public void setLimiteMinimoNormativa(String limiteMinimoNormativa) {
+        this.limiteMinimoNormativa = limiteMinimoNormativa;
+    }
+
+    public String getLimiteMaximoNormativa() {
+        return limiteMaximoNormativa;
+    }
+
+    public void setLimiteMaximoNormativa(String limiteMaximoNormativa) {
+        this.limiteMaximoNormativa = limiteMaximoNormativa;
     }
 
     // Nested DTO for Cliente

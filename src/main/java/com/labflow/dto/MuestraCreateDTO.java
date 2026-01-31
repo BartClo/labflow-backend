@@ -19,6 +19,7 @@ public class MuestraCreateDTO {
     @JsonProperty("numero_interno")
     private String numeroInterno;
 
+    @NotBlank(message = "El código de barras es requerido")
     @Size(max = 100, message = "El código de barras no puede exceder 100 caracteres")
     @JsonProperty("codigo_barras")
     private String codigoBarras;

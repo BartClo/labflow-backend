@@ -5,12 +5,14 @@ import com.labflow.model.OrdenTrabajo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -227,4 +229,63 @@ public interface MuestraAnalisisRepository extends JpaRepository<MuestraAnalisis
     Long countByOrdenTrabajoAndEstadoAnalisis(
             @Param("ordenTrabajo") OrdenTrabajo ordenTrabajo,
             @Param("estado") MuestraAnalisis.EstadoAnalisis estado);
+
+    // ============================================================================
+    // Consultas para Workflow Pull
+    // ============================================================================
+
+    /**
+     * Busca tarea por código de barras de muestra y estado EN_PROCESO
+     * Usado para búsqueda por QR en el workflow
+     */
+    @Query("SELECT ma FROM MuestraAnalisis ma " +
+           "WHERE ma.muestra.codigoBarras = :codigoBarras " +
+           "AND ma.estadoAnalisis = 'EN_PROCESO' " +
+           "ORDER BY ma.fechaAgregado ASC")
+    List<MuestraAnalisis> findByMuestra_CodigoBarrasAndEstado(@Param("codigoBarras") String codigoBarras);
+
+    /**
+     * Agrupa tareas pendientes sin OT por nombre de análisis
+     * Retorna un mapa con el nombre del análisis y el conteo
+     */
+    @Query("SELECT ma.analisis.nombreAnalisis as nombreAnalisis, COUNT(ma) as cantidad " +
+           "FROM MuestraAnalisis ma " +
+           "WHERE ma.ordenTrabajo IS NULL " +
+           "AND ma.estadoAnalisis = 'PENDIENTE' " +
+           "GROUP BY ma.analisis.nombreAnalisis " +
+           "ORDER BY COUNT(ma) DESC")
+    List<Object[]> countTareasPendientesPorAnalisis();
+
+    /**
+     * Libera tareas de una orden de trabajo cancelada
+     * Solo libera tareas EN_PROCESO sin resultado
+     */
+    @Modifying
+    @Query("UPDATE MuestraAnalisis ma " +
+           "SET ma.ordenTrabajo = NULL, " +
+           "    ma.estadoAnalisis = 'PENDIENTE', " +
+           "    ma.fechaInicio = NULL, " +
+           "    ma.tecnicoResponsable = NULL " +
+           "WHERE ma.ordenTrabajo.id = :ordenTrabajoId " +
+           "AND ma.estadoAnalisis = 'EN_PROCESO' " +
+           "AND ma.resultado IS NULL")
+    int liberarTareasDeOrdenCancelada(@Param("ordenTrabajoId") UUID ordenTrabajoId);
+
+    /**
+     * Cuenta tareas no finalizadas en una orden de trabajo
+     * Usado para validar generación de informes
+     */
+    @Query("SELECT COUNT(ma) FROM MuestraAnalisis ma " +
+           "WHERE ma.ordenTrabajo.id = :ordenTrabajoId " +
+           "AND ma.estadoAnalisis NOT IN ('COMPLETADO', 'VALIDADO')")
+    Long countTareasNoFinalizadasByOrdenTrabajo(@Param("ordenTrabajoId") UUID ordenTrabajoId);
+
+    /**
+     * Cuenta tareas con resultados (COMPLETADO o VALIDADO) por muestra
+     * Usado para validar eliminación de muestras
+     */
+    @Query("SELECT COUNT(ma) FROM MuestraAnalisis ma " +
+           "WHERE ma.muestra.idMuestra = :idMuestra " +
+           "AND ma.estadoAnalisis IN ('COMPLETADO', 'VALIDADO')")
+    Long countTareasConResultadosByMuestra(@Param("idMuestra") UUID idMuestra);
 }

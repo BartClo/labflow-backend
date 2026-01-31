@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -48,4 +49,13 @@ public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, UUID
      * Obtiene todas las órdenes ordenadas por fecha de creación descendente
      */
     List<OrdenTrabajo> findAllByOrderByFechaCreacionDesc();
+
+    /**
+     * Encuentra la última orden de trabajo cuyo código empiece con el prefijo dado
+     * Usado para generación automática de código OT secuencial
+     */
+    @Query("SELECT ot FROM OrdenTrabajo ot " +
+           "WHERE ot.codigoOT LIKE :prefix% " +
+           "ORDER BY ot.codigoOT DESC")
+    Optional<OrdenTrabajo> findFirstByCodigoOTStartingWithOrderByCodigoOTDesc(@Param("prefix") String prefix);
 }
