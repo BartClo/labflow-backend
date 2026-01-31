@@ -58,4 +58,54 @@ public class TareaController {
 
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Busca una tarea por código de barras QR en estado EN_PROCESO
+     * GET /api/tareas/search?codigo={codigo_qr}
+     */
+    @GetMapping("/search")
+    public ResponseEntity<TareaPendienteDTO> buscarPorCodigoBarras(
+            @RequestParam String codigo) {
+
+        logger.info("Búsqueda de tarea por código QR: {}", codigo);
+
+        TareaPendienteDTO tarea = tareaService.buscarPorCodigoBarras(codigo);
+
+        return ResponseEntity.ok(tarea);
+    }
+
+    /**
+     * Agrupa tareas pendientes sin OT por tipo de análisis
+     * GET /api/tareas/pendientes-por-analisis
+     */
+    @GetMapping("/pendientes-por-analisis")
+    public ResponseEntity<Map<String, Long>> contarTareasPendientesPorAnalisis() {
+
+        logger.info("Solicitud de conteo de tareas pendientes agrupadas por análisis");
+
+        Map<String, Long> conteo = tareaService.contarTareasPendientesPorAnalisis();
+
+        logger.info("Se encontraron {} tipos de análisis con tareas pendientes", conteo.size());
+
+        return ResponseEntity.ok(conteo);
+    }
+
+    /**
+     * Valida una tarea, cambiando su estado de COMPLETADO a VALIDADO
+     * PATCH /api/tareas/{id}/validar
+     */
+    @PatchMapping("/{id}/validar")
+    public ResponseEntity<Map<String, String>> validarTarea(@PathVariable UUID id) {
+
+        logger.info("Validando tarea: {}", id);
+
+        tareaService.validarTarea(id);
+
+        Map<String, String> response = Map.of(
+                "mensaje", "Tarea validada exitosamente",
+                "tarea_id", id.toString()
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }

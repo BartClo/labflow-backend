@@ -40,6 +40,34 @@ public class OrdenTrabajoService {
     private UsuarioRepository usuarioRepository;
 
     /**
+     * Genera automáticamente un código OT secuencial del formato OT-YYYY-NNNN
+     */
+    private String generarCodigoOT() {
+        int year = java.time.LocalDateTime.now().getYear();
+        String prefix = "OT-" + year + "-";
+        
+        // Buscar la última orden del año actual
+        java.util.Optional<OrdenTrabajo> ultimaOrden = 
+            ordenTrabajoRepository.findFirstByCodigoOTStartingWithOrderByCodigoOTDesc(prefix);
+        
+        int siguienteNumero = 1;
+        if (ultimaOrden.isPresent()) {
+            String ultimoCodigo = ultimaOrden.get().getCodigoOT();
+            // Extraer el número de la última parte (OT-2026-0001 -> 0001)
+            String ultimoNumeroStr = ultimoCodigo.substring(ultimoCodigo.lastIndexOf('-') + 1);
+            try {
+                int ultimoNumero = Integer.parseInt(ultimoNumeroStr);
+                siguienteNumero = ultimoNumero + 1;
+            } catch (NumberFormatException e) {
+                logger.warn("No se pudo parsear el número de la última OT: {}", ultimoCodigo);
+            }
+        }
+        
+        // Formatear con 4 dígitos: OT-2026-0001
+        return prefix + String.format("%04d", siguienteNumero);
+    }
+
+    /**
      * Crea una nueva orden de trabajo agrupando tareas pendientes
      */
     public OrdenTrabajoDTO crearOrdenTrabajo(OrdenTrabajoCreateDTO dto) {
@@ -89,16 +117,18 @@ public class OrdenTrabajoService {
 
         // Crear la orden de trabajo
         OrdenTrabajo ordenTrabajo = new OrdenTrabajo();
+        ordenTrabajo.setCodigoOT(generarCodigoOT());
         ordenTrabajo.setTecnicoAsignado(tecnico);
-        ordenTrabajo.setEstado(EstadoOT.PENDIENTE);
+        ordenTrabajo.setEstado(EstadoOT.ABIERTA);
 
         // Guardar la orden de trabajo
         ordenTrabajo = ordenTrabajoRepository.save(ordenTrabajo);
 
-        // Asignar la orden a cada tarea
+        // Asignar la orden a cada tarea y cambiar su estado a EN_PROCESO
         final OrdenTrabajo ordenFinal = ordenTrabajo;
         tareas.forEach(tarea -> {
             tarea.setOrdenTrabajo(ordenFinal);
+            tarea.setEstadoAnalisis(MuestraAnalisis.EstadoAnalisis.EN_PROCESO);
             muestraAnalisisRepository.save(tarea);
         });
 
@@ -166,8 +196,14 @@ public class OrdenTrabajoService {
 
         ordenTrabajo.setEstado(nuevoEstado);
 
-        if (nuevoEstado == EstadoOT.COMPLETADA || nuevoEstado == EstadoOT.CANCELADA) {
+        if (nuevoEstado == EstadoOT.FINALIZADA || nuevoEstado == EstadoOT.CANCELADA) {
             ordenTrabajo.setFechaFinalizacion(java.time.LocalDateTime.now());
+            
+            // Si se cancela, liberar tareas EN_PROCESO sin resultado
+            if (nuevoEstado == EstadoOT.CANCELADA) {
+                int tareasLiberadas = muestraAnalisisRepository.liberarTareasDeOrdenCancelada(id);
+                logger.info("Se liberaron {} tareas de la orden cancelada {}", tareasLiberadas, id);
+            }
         }
 
         ordenTrabajo = ordenTrabajoRepository.save(ordenTrabajo);
@@ -184,6 +220,7 @@ public class OrdenTrabajoService {
     private OrdenTrabajoDTO convertirADto(OrdenTrabajo ordenTrabajo, List<MuestraAnalisis> tareas) {
         OrdenTrabajoDTO dto = new OrdenTrabajoDTO();
         dto.setIdOrdenTrabajo(ordenTrabajo.getId());
+        dto.setCodigoOT(ordenTrabajo.getCodigoOT());
         dto.setEstado(ordenTrabajo.getEstado().name());
         dto.setFechaCreacion(ordenTrabajo.getFechaCreacion());
         dto.setFechaFinalizacion(ordenTrabajo.getFechaFinalizacion());
@@ -200,7 +237,7 @@ public class OrdenTrabajoService {
 
         // Convertir tareas
         List<TareaBasicDTO> tareasDTO = tareas.stream()
-                .map(this::convertirTareaBasicDto)
+                .<TareaBasicDTO>map(this::convertirTareaBasicDto)
                 .collect(Collectors.toList());
         dto.setTareas(tareasDTO);
 

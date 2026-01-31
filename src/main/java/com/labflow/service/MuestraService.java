@@ -286,6 +286,14 @@ public class MuestraService {
         Muestra muestra = muestraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(MUESTRA_NO_ENCONTRADA + id));
 
+        // Validación de integridad: No se puede eliminar si tiene tareas con resultados
+        Long tareasConResultados = muestraAnalisisRepository.countTareasConResultadosByMuestra(id);
+        if (tareasConResultados > 0) {
+            throw new ValidationException(
+                    String.format("No se puede eliminar la muestra. Tiene %d tarea(s) con resultados cargados (COMPLETADO o VALIDADO).",
+                            tareasConResultados));
+        }
+
         // Verificar que se puede eliminar (ej: no tiene análisis en proceso)
         boolean tieneAnalisisEnProceso = muestra.getMuestraAnalisis().stream()
                 .anyMatch(ma -> ma.getEstadoAnalisis() == MuestraAnalisis.EstadoAnalisis.EN_PROCESO);
