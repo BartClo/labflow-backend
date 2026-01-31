@@ -73,6 +73,9 @@ public class MuestraAnalisis {
     @Column(name = "cumple_normativa")
     private Boolean cumpleNormativa;
 
+    @Column(name = "cumple_norma")
+    private Boolean cumpleNorma;
+
     @Column(name = "es_control_calidad")
     private Boolean esControlCalidad = false;
 
@@ -88,7 +91,7 @@ public class MuestraAnalisis {
 
     // Enum para estado del análisis
     public enum EstadoAnalisis {
-        PENDIENTE, EN_PROCESO, COMPLETADO, CANCELADO
+        PENDIENTE, EN_PROCESO, COMPLETADO, VALIDADO, CANCELADO
     }
 
     // Constructors
@@ -245,6 +248,14 @@ public class MuestraAnalisis {
         this.notasValidacion = notasValidacion;
     }
 
+    public Boolean getCumpleNorma() {
+        return cumpleNorma;
+    }
+
+    public void setCumpleNorma(Boolean cumpleNorma) {
+        this.cumpleNorma = cumpleNorma;
+    }
+
     public OrdenTrabajo getOrdenTrabajo() {
         return ordenTrabajo;
     }
@@ -270,6 +281,10 @@ public class MuestraAnalisis {
         return this.estadoAnalisis == EstadoAnalisis.CANCELADO;
     }
 
+    public boolean estaValidado() {
+        return this.estadoAnalisis == EstadoAnalisis.VALIDADO;
+    }
+
     public void iniciarAnalisis(String tecnico) {
         this.estadoAnalisis = EstadoAnalisis.EN_PROCESO;
         this.fechaInicio = LocalDateTime.now();
@@ -285,6 +300,14 @@ public class MuestraAnalisis {
     public void cancelarAnalisis(String motivo) {
         this.estadoAnalisis = EstadoAnalisis.CANCELADO;
         this.observacionesAnalisis = motivo;
+    }
+
+    public void validar() {
+        if (this.estadoAnalisis != EstadoAnalisis.COMPLETADO) {
+            throw new IllegalStateException("Solo se pueden validar tareas en estado COMPLETADO");
+        }
+        this.estadoAnalisis = EstadoAnalisis.VALIDADO;
+        this.fechaActualizacion = LocalDateTime.now();
     }
 
     public Long getDuracionEnMinutos() {

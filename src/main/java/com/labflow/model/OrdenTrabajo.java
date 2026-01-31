@@ -19,6 +19,9 @@ public class OrdenTrabajo {
     @Column(name = "id_orden_trabajo")
     private UUID id;
 
+    @Column(name = "codigo_ot", unique = true, nullable = false, length = 50)
+    private String codigoOT;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
     private EstadoOT estado;
@@ -44,7 +47,7 @@ public class OrdenTrabajo {
 
     // Constructors
     public OrdenTrabajo() {
-        this.estado = EstadoOT.PENDIENTE;
+        this.estado = EstadoOT.ABIERTA;
         this.fechaCreacion = LocalDateTime.now();
         this.createdAt = LocalDateTime.now();
     }
@@ -61,6 +64,14 @@ public class OrdenTrabajo {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getCodigoOT() {
+        return codigoOT;
+    }
+
+    public void setCodigoOT(String codigoOT) {
+        this.codigoOT = codigoOT;
     }
 
     public EstadoOT getEstado() {
@@ -125,7 +136,7 @@ public class OrdenTrabajo {
      * Completa la orden de trabajo estableciendo la fecha de finalización
      */
     public void completar() {
-        this.estado = EstadoOT.COMPLETADA;
+        this.estado = EstadoOT.FINALIZADA;
         this.fechaFinalizacion = LocalDateTime.now();
     }
 

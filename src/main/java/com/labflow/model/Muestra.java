@@ -25,7 +25,8 @@ public class Muestra {
     @Size(max = 100, message = "El número interno no puede exceder 100 caracteres")
     private String numeroInterno;
 
-    @Column(name = "codigo_barras", length = 100, unique = true)
+    @Column(name = "codigo_barras", length = 100, unique = true, nullable = false)
+    @NotBlank(message = "El código de barras es requerido")
     @Size(max = 100, message = "El código de barras no puede exceder 100 caracteres")
     private String codigoBarras;
 

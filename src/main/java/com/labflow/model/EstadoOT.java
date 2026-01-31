@@ -5,9 +5,9 @@ package com.labflow.model;
  */
 public enum EstadoOT {
     /**
-     * Orden creada pero no iniciada
+     * Orden creada y lista para asignar tareas
      */
-    PENDIENTE,
+    ABIERTA,
     
     /**
      * Orden en proceso de ejecución
@@ -17,7 +17,7 @@ public enum EstadoOT {
     /**
      * Orden completada con todos los análisis finalizados
      */
-    COMPLETADA,
+    FINALIZADA,
     
     /**
      * Orden cancelada
