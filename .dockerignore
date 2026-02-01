@@ -1,12 +1,62 @@
+# Maven
 target/
-.mvn/
-*.log
-.env
-.env.local
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+
+# Git
 .git/
 .gitignore
-.idea/
-*.iml
-.vscode/
+.gitattributes
+
+# Docker
+.dockerignore
+docker-compose.yml
+nginx.conf
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporal files
+*.tmp
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Documentation
 *.md
 !README.md
+
+# Build scripts
+build.sh
+start.sh
+
+# Render specific
+render.yaml
+RENDER_QUICKSTART.md
