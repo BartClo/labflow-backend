@@ -20,19 +20,38 @@ ALTER TABLE ordenes_trabajo
 ADD COLUMN codigo_ot VARCHAR(50) UNIQUE;
 
 -- Generate codigo_ot for existing orders
-UPDATE ordenes_trabajo
-SET codigo_ot = 'OT-' || TO_CHAR(fecha_creacion, 'YYYY') || '-' || LPAD(ROW_NUMBER() OVER (PARTITION BY EXTRACT(YEAR FROM fecha_creacion) ORDER BY fecha_creacion)::TEXT, 4, '0')
-WHERE codigo_ot IS NULL;
+WITH numbered_ot AS (
+    SELECT
+        id_orden_trabajo,
+        'OT-' ||
+        TO_CHAR(fecha_creacion, 'YYYY') || '-' ||
+        LPAD(
+            ROW_NUMBER() OVER (
+                PARTITION BY EXTRACT(YEAR FROM fecha_creacion)
+                ORDER BY fecha_creacion
+            )::TEXT,
+            4,
+            '0'
+        ) AS new_codigo_ot
+    FROM ordenes_trabajo
+    WHERE codigo_ot IS NULL
+)
+UPDATE ordenes_trabajo ot
+SET codigo_ot = n.new_codigo_ot
+FROM numbered_ot n
+WHERE ot.id_orden_trabajo = n.id_orden_trabajo;
 
 -- Make codigo_ot NOT NULL after backfilling
 ALTER TABLE ordenes_trabajo
 ALTER COLUMN codigo_ot SET NOT NULL;
 
 -- Create index on muestra_analisis for better performance on pending tasks queries
-CREATE INDEX idx_muestra_analisis_ot_estado ON muestra_analisis(orden_trabajo_id, estado_analisis);
+CREATE INDEX IF NOT EXISTS idx_muestra_analisis_ot_estado
+ON muestra_analisis(orden_trabajo_id, estado_analisis);
 
 -- Create index on codigo_barras for faster QR searches
-CREATE INDEX idx_muestras_codigo_barras ON muestras(codigo_barras);
+CREATE INDEX IF NOT EXISTS idx_muestras_codigo_barras
+ON muestras(codigo_barras);
 
 -- Add comment to document the workflow
 COMMENT ON COLUMN muestra_analisis.cumple_norma IS 'Indicates if the result meets NCh 409 normative limits';

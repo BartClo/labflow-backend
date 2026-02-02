@@ -16,65 +16,65 @@ import java.util.UUID;
 public class MuestraCreateDTO {
 
     @Size(max = 100, message = "El número interno no puede exceder 100 caracteres")
-    @JsonProperty("numero_interno")
+    @JsonProperty("numeroInterno")
     private String numeroInterno;
 
     @NotBlank(message = "El código de barras es requerido")
     @Size(max = 100, message = "El código de barras no puede exceder 100 caracteres")
-    @JsonProperty("codigo_barras")
+    @JsonProperty("codigoBarras")
     private String codigoBarras;
 
     @NotNull(message = "El cliente es requerido")
-    @JsonProperty("id_cliente")
+    @JsonProperty("idCliente")
     private UUID idCliente;
 
     @NotBlank(message = "El punto de muestreo es requerido")
     @Size(max = 255, message = "El punto de muestreo no puede exceder 255 caracteres")
-    @JsonProperty("punto_muestreo")
+    @JsonProperty("puntoMuestreo")
     private String puntoMuestreo;
 
     @Size(max = 100, message = "El tipo de muestra no puede exceder 100 caracteres")
-    @JsonProperty("tipo_muestra")
+    @JsonProperty("tipoMuestra")
     private String tipoMuestra;
 
-    @Pattern(regexp = "(?i)ALTA|MEDIA|BAJA", message = "La prioridad debe ser ALTA, MEDIA o BAJA")
-    @Schema(description = "Prioridad de la muestra", example = "MEDIA")
+    @Pattern(regexp = "(?i)(alta|media|baja)", message = "La prioridad debe ser alta, media o baja")
+    @Schema(description = "Prioridad de la muestra", example = "media")
     @JsonProperty("prioridad")
-    private String prioridad = "MEDIA";
+    private String prioridad = "media";
 
-    @JsonProperty("fecha_muestreo")
+    @JsonProperty("fechaMuestreo")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss[XXX]")
     @Schema(description = "Fecha y hora de muestreo en formato ISO-8601", example = "2025-01-15T14:30:00Z")
     private LocalDateTime fechaMuestreo;
 
-    @JsonProperty("fecha_recepcion")
+    @JsonProperty("fechaRecepcion")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss[XXX]")
     @Schema(description = "Fecha y hora de recepción en formato ISO-8601", example = "2025-01-15T16:00:00Z")
     private LocalDateTime fechaRecepcion;
 
     @Size(max = 255, message = "El responsable del muestreo no puede exceder 255 caracteres")
-    @JsonProperty("responsable_muestreo")
+    @JsonProperty("responsableMuestreo")
     private String responsableMuestreo;
 
     // Condiciones de transporte
     @DecimalMin(value = "-50.0", message = "La temperatura de transporte debe ser mayor a -50°C")
     @DecimalMax(value = "100.0", message = "La temperatura de transporte debe ser menor a 100°C")
-    @JsonProperty("temperatura_transporte")
+    @JsonProperty("temperaturaTransporte")
     private BigDecimal temperaturaTransporte;
 
     @Size(max = 500, message = "Las condiciones de transporte no pueden exceder 500 caracteres")
-    @JsonProperty("condiciones_transporte")
+    @JsonProperty("condicionesTransporte")
     private String condicionesTransporte;
 
     @Size(max = 100, message = "El tipo de envase no puede exceder 100 caracteres")
-    @JsonProperty("tipo_envase")
+    @JsonProperty("tipoEnvase")
     private String tipoEnvase;
 
-    @JsonProperty("conservantes_utilizados")
+    @JsonProperty("conservantesUtilizados")
     private Boolean conservantesUtilizados = false;
 
     @Size(max = 255, message = "La descripción de conservantes no puede exceder 255 caracteres")
-    @JsonProperty("descripcion_conservantes")
+    @JsonProperty("descripcionConservantes")
     private String descripcionConservantes;
 
     // Observaciones y estado
@@ -82,36 +82,53 @@ public class MuestraCreateDTO {
     @JsonProperty("observaciones")
     private String observaciones;
 
-    @Pattern(regexp = "(?i)RECIBIDA|EN_PROCESO|ANALIZADA|COMPLETADA|RECHAZADA", 
-             message = "El estado debe ser RECIBIDA, EN_PROCESO, ANALIZADA, COMPLETADA o RECHAZADA")
-    @Schema(description = "Estado inicial de la muestra", example = "RECIBIDA")
+    @Pattern(regexp = "(?i)(recibida|en_proceso|analizada|completada|rechazada)", 
+             message = "El estado debe ser recibida, en_proceso, analizada, completada o rechazada")
+    @Schema(description = "Estado inicial de la muestra", example = "recibida")
     @JsonProperty("estado")
-    private String estado = "RECIBIDA";
+    private String estado = "recibida";
 
     // Análisis a realizar
-    @JsonProperty("analisis_ids")
+    @JsonProperty("analisisIds")
     private List<UUID> analisisIds;
 
     // Plantillas a aplicar
-    @JsonProperty("plantilla_ids")
+    @JsonProperty("plantillaIds")
     private List<UUID> plantillaIds;
 
     // Datos adicionales del frontend
     @Size(max = 255, message = "La información del cliente no puede exceder 255 caracteres")
-    @JsonProperty("info_cliente")
+    @JsonProperty("infoCliente")
     private String infoCliente;
 
     @Size(max = 255, message = "El método de análisis no puede exceder 255 caracteres")
-    @JsonProperty("metodo_analisis")
+    @JsonProperty("metodoAnalisis")
     private String metodoAnalisis;
 
-    @JsonProperty("volumen_muestra")
+    @JsonProperty("volumenMuestra")
     @DecimalMin(value = "0.0", message = "El volumen debe ser positivo")
     private BigDecimal volumenMuestra;
 
     @Size(max = 50, message = "La unidad de volumen no puede exceder 50 caracteres")
-    @JsonProperty("unidad_volumen")
+    @JsonProperty("unidadVolumen")
     private String unidadVolumen;
+
+    // Campos adicionales del frontend
+    @Size(max = 255, message = "El nombre del proyecto no puede exceder 255 caracteres")
+    @JsonProperty("nombreProyecto")
+    private String nombreProyecto;
+
+    @Size(max = 100, message = "El número de solicitud no puede exceder 100 caracteres")
+    @JsonProperty("numeroSolicitud")
+    private String numeroSolicitud;
+
+    @Size(max = 100, message = "La condición de la muestra no puede exceder 100 caracteres")
+    @JsonProperty("condicionMuestra")
+    private String condicionMuestra;
+
+    @Size(max = 50, message = "La unidad de temperatura no puede exceder 50 caracteres")
+    @JsonProperty("unidadTemperatura")
+    private String unidadTemperatura;
 
     // Constructor por defecto requerido para deserialización JSON
     public MuestraCreateDTO() {
@@ -293,6 +310,38 @@ public class MuestraCreateDTO {
 
     public void setUnidadVolumen(String unidadVolumen) {
         this.unidadVolumen = unidadVolumen;
+    }
+
+    public String getNombreProyecto() {
+        return nombreProyecto;
+    }
+
+    public void setNombreProyecto(String nombreProyecto) {
+        this.nombreProyecto = nombreProyecto;
+    }
+
+    public String getNumeroSolicitud() {
+        return numeroSolicitud;
+    }
+
+    public void setNumeroSolicitud(String numeroSolicitud) {
+        this.numeroSolicitud = numeroSolicitud;
+    }
+
+    public String getCondicionMuestra() {
+        return condicionMuestra;
+    }
+
+    public void setCondicionMuestra(String condicionMuestra) {
+        this.condicionMuestra = condicionMuestra;
+    }
+
+    public String getUnidadTemperatura() {
+        return unidadTemperatura;
+    }
+
+    public void setUnidadTemperatura(String unidadTemperatura) {
+        this.unidadTemperatura = unidadTemperatura;
     }
 
     @Override

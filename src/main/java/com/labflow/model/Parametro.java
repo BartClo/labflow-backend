@@ -33,6 +33,9 @@ public class Parametro {
     @Column(name = "valor_maximo_normativa", length = 255)
     private String valorMaximoNormativa;
 
+    @Column(name = "valor_minimo_normativa", length = 255)
+    private String valorMinimoNormativa;
+
     // Criterios de Control de Calidad (desde Excel "Controles LABCAUSS")
     @Column(name = "criterio_precision", columnDefinition = "TEXT")
     private String criterioPrecision;  // Columna C: Precisión (Duplicado)
@@ -103,6 +106,10 @@ public class Parametro {
 
     public String getValorMaximoNormativa() {
         return valorMaximoNormativa;
+    }
+
+    public String getValorMinimoNormativa() {
+        return valorMinimoNormativa;
     }
 
     public void setValorMaximoNormativa(String valorMaximoNormativa) {

@@ -302,8 +302,9 @@ public class TareaService {
         // Obtener el parámetro principal (si existe)
         if (!parametros.isEmpty()) {
             Parametro parametroPrincipal = parametros.get(0);
-            dto.setLimiteMinimoNormativa(parametroPrincipal.getLimiteMinimoNormativa());
-            dto.setLimiteMaximoNormativa(parametroPrincipal.getLimiteMaximoNormativa());
+            dto.setLimiteMinimoNormativa(parametroPrincipal.getValorMinimoNormativa());
+            dto.setLimiteMaximoNormativa(parametroPrincipal.getValorMaximoNormativa());
+
         }
 
         dto.setCumpleNorma(tarea.getCumpleNorma());
