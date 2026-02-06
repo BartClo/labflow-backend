@@ -3,6 +3,7 @@ package com.labflow.repository;
 import com.labflow.model.EstadoOT;
 import com.labflow.model.OrdenTrabajo;
 import com.labflow.model.Usuario;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -55,7 +56,7 @@ public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, UUID
      * Usado para generación automática de código OT secuencial
      */
     @Query("SELECT ot FROM OrdenTrabajo ot " +
-           "WHERE ot.codigoOT LIKE :prefix% " +
+           "WHERE ot.codigoOT LIKE CONCAT(:prefix, '%') " +
            "ORDER BY ot.codigoOT DESC")
-    Optional<OrdenTrabajo> findFirstByCodigoOTStartingWithOrderByCodigoOTDesc(@Param("prefix") String prefix);
+    List<OrdenTrabajo> findFirstByCodigoOTStartingWithOrderByCodigoOTDesc(@Param("prefix") String prefix, Pageable pageable);
 }

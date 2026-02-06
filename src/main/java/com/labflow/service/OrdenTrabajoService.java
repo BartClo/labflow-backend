@@ -13,6 +13,7 @@ import com.labflow.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,13 +47,13 @@ public class OrdenTrabajoService {
         int year = java.time.LocalDateTime.now().getYear();
         String prefix = "OT-" + year + "-";
         
-        // Buscar la última orden del año actual
-        java.util.Optional<OrdenTrabajo> ultimaOrden = 
-            ordenTrabajoRepository.findFirstByCodigoOTStartingWithOrderByCodigoOTDesc(prefix);
+        // Buscar la última orden del año actual con límite de 1 resultado
+        List<OrdenTrabajo> ordenesEncontradas = 
+            ordenTrabajoRepository.findFirstByCodigoOTStartingWithOrderByCodigoOTDesc(prefix, PageRequest.of(0, 1));
         
         int siguienteNumero = 1;
-        if (ultimaOrden.isPresent()) {
-            String ultimoCodigo = ultimaOrden.get().getCodigoOT();
+        if (!ordenesEncontradas.isEmpty()) {
+            String ultimoCodigo = ordenesEncontradas.get(0).getCodigoOT();
             // Extraer el número de la última parte (OT-2026-0001 -> 0001)
             String ultimoNumeroStr = ultimoCodigo.substring(ultimoCodigo.lastIndexOf('-') + 1);
             try {
@@ -251,6 +252,40 @@ public class OrdenTrabajoService {
                 .count());
 
         return dto;
+    }
+
+    /**
+     * Elimina una orden de trabajo y libera sus tareas asociadas
+     */
+    public void eliminarOrdenTrabajo(UUID id) {
+        logger.info("Eliminando orden de trabajo: {}", id);
+
+        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Orden de trabajo no encontrada con ID: " + id));
+
+        // Solo se pueden eliminar órdenes en estado ABIERTA o CANCELADA
+        if (ordenTrabajo.getEstado() == EstadoOT.FINALIZADA) {
+            throw new ValidationException(
+                    "No se puede eliminar una orden de trabajo finalizada. " +
+                    "Solo se pueden eliminar órdenes abiertas o canceladas.");
+        }
+
+        // Obtener las tareas asociadas y liberarlas
+        List<MuestraAnalisis> tareas = muestraAnalisisRepository.findByOrdenTrabajo(ordenTrabajo);
+        
+        for (MuestraAnalisis tarea : tareas) {
+            tarea.setOrdenTrabajo(null);
+            // Devolver las tareas al estado PENDIENTE
+            tarea.setEstadoAnalisis(MuestraAnalisis.EstadoAnalisis.PENDIENTE);
+            muestraAnalisisRepository.save(tarea);
+        }
+
+        // Eliminar la orden de trabajo
+        ordenTrabajoRepository.delete(ordenTrabajo);
+
+        logger.info("Orden de trabajo {} eliminada. Se liberaron {} tareas", 
+                ordenTrabajo.getCodigoOT(), tareas.size());
     }
 
     /**

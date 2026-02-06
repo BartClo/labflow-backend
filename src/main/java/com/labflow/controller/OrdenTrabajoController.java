@@ -98,4 +98,17 @@ public class OrdenTrabajoController {
 
         return ResponseEntity.ok(ordenActualizada);
     }
+
+    /**
+     * Elimina una orden de trabajo
+     * DELETE /api/ordenes/{id}
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarOrdenTrabajo(@PathVariable UUID id) {
+        logger.info("Solicitud para eliminar orden de trabajo: {}", id);
+
+        ordenTrabajoService.eliminarOrdenTrabajo(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }
