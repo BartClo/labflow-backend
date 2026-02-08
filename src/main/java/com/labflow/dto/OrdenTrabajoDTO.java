@@ -40,6 +40,12 @@ public class OrdenTrabajoDTO {
     @JsonProperty("tareas_completadas")
     private Integer tareasCompletadas;
 
+    @JsonProperty("workflow_progreso")
+    private WorkflowProgressDTO workflowProgreso;
+
+    @JsonProperty("cantidad_muestras_rechazadas")
+    private Integer cantidadMuestrasRechazadas;
+
     // Constructores
     public OrdenTrabajoDTO() {
     }
@@ -123,5 +129,21 @@ public class OrdenTrabajoDTO {
 
     public void setTareasCompletadas(Integer tareasCompletadas) {
         this.tareasCompletadas = tareasCompletadas;
+    }
+
+    public WorkflowProgressDTO getWorkflowProgreso() {
+        return workflowProgreso;
+    }
+
+    public void setWorkflowProgreso(WorkflowProgressDTO workflowProgreso) {
+        this.workflowProgreso = workflowProgreso;
+    }
+
+    public Integer getCantidadMuestrasRechazadas() {
+        return cantidadMuestrasRechazadas;
+    }
+
+    public void setCantidadMuestrasRechazadas(Integer cantidadMuestrasRechazadas) {
+        this.cantidadMuestrasRechazadas = cantidadMuestrasRechazadas;
     }
 }
