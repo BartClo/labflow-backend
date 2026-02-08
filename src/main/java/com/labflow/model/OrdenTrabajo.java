@@ -39,6 +39,9 @@ public class OrdenTrabajo {
     @OneToMany(mappedBy = "ordenTrabajo", fetch = FetchType.LAZY)
     private List<MuestraAnalisis> tareas = new ArrayList<>();
 
+    @OneToMany(mappedBy = "ordenTrabajo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<OrdenTrabajoEtapa> etapasWorkflow = new ArrayList<>();
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -114,6 +117,14 @@ public class OrdenTrabajo {
         this.tareas = tareas;
     }
 
+    public List<OrdenTrabajoEtapa> getEtapasWorkflow() {
+        return etapasWorkflow;
+    }
+
+    public void setEtapasWorkflow(List<OrdenTrabajoEtapa> etapasWorkflow) {
+        this.etapasWorkflow = etapasWorkflow;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -169,6 +180,43 @@ public class OrdenTrabajo {
     public long contarTareasPendientes() {
         return tareas.stream()
                 .filter(tarea -> tarea.getEstadoAnalisis() == MuestraAnalisis.EstadoAnalisis.PENDIENTE)
+                .count();
+    }
+
+    /**
+     * Obtiene la etapa actual (primera etapa no completada) del workflow
+     * @return OrdenTrabajoEtapa o null si todas están completadas
+     */
+    public OrdenTrabajoEtapa obtenerEtapaActual() {
+        return etapasWorkflow.stream()
+                .filter(etapa -> !etapa.estaCompletada())
+                .min((e1, e2) -> e1.getOrdenSecuencia().compareTo(e2.getOrdenSecuencia()))
+                .orElse(null);
+    }
+
+    /**
+     * Verifica si todas las etapas del workflow están completadas
+     */
+    public boolean estaWorkflowCompleto() {
+        return etapasWorkflow.size() == 4 && 
+               etapasWorkflow.stream().allMatch(OrdenTrabajoEtapa::estaCompletada);
+    }
+
+    /**
+     * Obtiene todas las muestras/tareas que fueron rechazadas (no cumplen normativa)
+     */
+    public List<MuestraAnalisis> obtenerMuestrasRechazadas() {
+        return tareas.stream()
+                .filter(tarea -> Boolean.FALSE.equals(tarea.getCumpleNormativa()))
+                .toList();
+    }
+
+    /**
+     * Cuenta las muestras rechazadas en esta OT
+     */
+    public long contarMuestrasRechazadas() {
+        return tareas.stream()
+                .filter(tarea -> Boolean.FALSE.equals(tarea.getCumpleNormativa()))
                 .count();
     }
 }
