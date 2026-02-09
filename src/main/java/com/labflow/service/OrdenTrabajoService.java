@@ -13,6 +13,7 @@ import com.labflow.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,10 @@ public class OrdenTrabajoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    @Lazy
+    private WorkflowService workflowService;
 
     /**
      * Genera automáticamente un código OT secuencial del formato OT-YYYY-NNNN
@@ -125,6 +130,9 @@ public class OrdenTrabajoService {
         // Guardar la orden de trabajo
         ordenTrabajo = ordenTrabajoRepository.save(ordenTrabajo);
 
+        // Inicializar workflow con las 4 etapas estándar
+        workflowService.inicializarWorkflow(ordenTrabajo);
+
         // Asignar la orden a cada tarea y cambiar su estado a EN_PROCESO
         final OrdenTrabajo ordenFinal = ordenTrabajo;
         tareas.forEach(tarea -> {
@@ -195,6 +203,12 @@ public class OrdenTrabajoService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Orden de trabajo no encontrada con ID: " + id));
 
+        // Validar que el workflow esté completo antes de finalizar
+        if (nuevoEstado == EstadoOT.FINALIZADA && !ordenTrabajo.estaWorkflowCompleto()) {
+            throw new ValidationException(
+                    "No se puede finalizar la orden de trabajo. El workflow debe estar completo (todas las etapas finalizadas).");
+        }
+
         ordenTrabajo.setEstado(nuevoEstado);
 
         if (nuevoEstado == EstadoOT.FINALIZADA || nuevoEstado == EstadoOT.CANCELADA) {
@@ -250,6 +264,12 @@ public class OrdenTrabajoService {
         dto.setTareasCompletadas((int) tareas.stream()
                 .filter(t -> t.getEstadoAnalisis() == MuestraAnalisis.EstadoAnalisis.COMPLETADO)
                 .count());
+
+        // Información de muestras rechazadas
+        dto.setCantidadMuestrasRechazadas((int) ordenTrabajo.contarMuestrasRechazadas());
+        
+        // Nota: El progreso del workflow se obtiene mediante el endpoint separado
+        // GET /api/ordenes/{id}/workflow para evitar dependencia circular
 
         return dto;
     }

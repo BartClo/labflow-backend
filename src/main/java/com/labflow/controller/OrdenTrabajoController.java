@@ -1,9 +1,13 @@
 package com.labflow.controller;
 
+import com.labflow.dto.CompletarEtapaDTO;
+import com.labflow.dto.CrearOTRechazadasDTO;
 import com.labflow.dto.OrdenTrabajoDTO;
+import com.labflow.dto.WorkflowProgressDTO;
 import com.labflow.dto.request.OrdenTrabajoCreateDTO;
 import com.labflow.model.EstadoOT;
 import com.labflow.service.OrdenTrabajoService;
+import com.labflow.service.WorkflowService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,9 @@ public class OrdenTrabajoController {
 
     @Autowired
     private OrdenTrabajoService ordenTrabajoService;
+
+    @Autowired
+    private WorkflowService workflowService;
 
     /**
      * Crea una nueva orden de trabajo agrupando tareas
@@ -97,6 +104,55 @@ public class OrdenTrabajoController {
         OrdenTrabajoDTO ordenActualizada = ordenTrabajoService.actualizarEstado(id, estado);
 
         return ResponseEntity.ok(ordenActualizada);
+    }
+
+    /**
+     * Obtiene el progreso del workflow de una orden de trabajo
+     * GET /api/ordenes/{id}/workflow
+     */
+    @GetMapping("/{id}/workflow")
+    public ResponseEntity<WorkflowProgressDTO> obtenerWorkflow(@PathVariable UUID id) {
+        logger.info("Solicitud de workflow para orden: {}", id);
+
+        WorkflowProgressDTO progreso = workflowService.obtenerProgreso(id);
+
+        return ResponseEntity.ok(progreso);
+    }
+
+    /**
+     * Completa la etapa actual del workflow y avanza a la siguiente
+     * POST /api/ordenes/{id}/workflow/completar-etapa
+     */
+    @PostMapping("/{id}/workflow/completar-etapa")
+    public ResponseEntity<WorkflowProgressDTO> completarEtapa(
+            @PathVariable UUID id,
+            @RequestBody(required = false) CompletarEtapaDTO dto) {
+
+        logger.info("Completando etapa actual de orden: {}", id);
+
+        String notas = (dto != null) ? dto.getNotas() : null;
+        WorkflowProgressDTO progreso = workflowService.avanzarEtapa(id, notas);
+
+        return ResponseEntity.ok(progreso);
+    }
+
+    /**
+     * Crea una nueva orden de trabajo con las muestras rechazadas de esta orden
+     * POST /api/ordenes/{id}/crear-ot-rechazadas
+     */
+    @PostMapping("/{id}/crear-ot-rechazadas")
+    public ResponseEntity<OrdenTrabajoDTO> crearOTConMuestrasRechazadas(
+            @PathVariable UUID id,
+            @RequestBody(required = false) CrearOTRechazadasDTO dto) {
+
+        logger.info("Creando nueva OT con muestras rechazadas de orden: {}", id);
+
+        UUID tecnicoId = (dto != null) ? dto.getTecnicoAsignadoId() : null;
+        String notas = (dto != null) ? dto.getNotas() : null;
+
+        OrdenTrabajoDTO nuevaOT = workflowService.crearOTConMuestrasRechazadas(id, tecnicoId, notas);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOT);
     }
 
     /**
