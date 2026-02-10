@@ -35,9 +35,6 @@ EXPOSE 8080
 
 # Variables de entorno por defecto
 ENV SPRING_PROFILES_ACTIVE=prod
-<<<<<<< HEAD
-ENTRYPOINT ["/app/start.sh"]
-=======
 ENV JAVA_OPTS="-Xms512m -Xmx1536m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
 
 # Health check
@@ -45,4 +42,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
 
 ENTRYPOINT ["/app/start.sh"]
->>>>>>> 1662017c5302199f27eda014ca1a9cd039d29884
