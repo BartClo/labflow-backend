@@ -149,8 +149,9 @@ public class OrdenTrabajoController {
 
         UUID tecnicoId = (dto != null) ? dto.getTecnicoAsignadoId() : null;
         String notas = (dto != null) ? dto.getNotas() : null;
+        java.util.List<UUID> tareaIds = (dto != null) ? dto.getTareaIds() : null;
 
-        OrdenTrabajoDTO nuevaOT = workflowService.crearOTConMuestrasRechazadas(id, tecnicoId, notas);
+        OrdenTrabajoDTO nuevaOT = workflowService.crearOTConMuestrasRechazadas(id, tecnicoId, notas, tareaIds);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOT);
     }

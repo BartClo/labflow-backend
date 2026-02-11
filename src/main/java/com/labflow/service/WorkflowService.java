@@ -177,11 +177,22 @@ public class WorkflowService {
      * @throws ResourceNotFoundException if OT not found
      * @throws ValidationException if no rejected samples exist
      */
-    public OrdenTrabajoDTO crearOTConMuestrasRechazadas(UUID ordenTrabajoOriginalId, UUID tecnicoAsignadoId, String notas) {
+    public OrdenTrabajoDTO crearOTConMuestrasRechazadas(UUID ordenTrabajoOriginalId, UUID tecnicoAsignadoId, String notas, List<UUID> tareaIdsARechazar) {
         logger.info("Creando nueva OT con muestras rechazadas de OT ID: {}", ordenTrabajoOriginalId);
 
         OrdenTrabajo otOriginal = ordenTrabajoRepository.findById(ordenTrabajoOriginalId)
                 .orElseThrow(() -> new ResourceNotFoundException("Orden de Trabajo no encontrada con ID: " + ordenTrabajoOriginalId));
+
+        // If specific task IDs were provided, mark them as rejected (cumpleNormativa = false)
+        if (tareaIdsARechazar != null && !tareaIdsARechazar.isEmpty()) {
+            for (MuestraAnalisis tarea : otOriginal.getTareas()) {
+                if (tareaIdsARechazar.contains(tarea.getIdMuestraAnalisis())) {
+                    tarea.setCumpleNormativa(false);
+                    muestraAnalisisRepository.save(tarea);
+                    logger.info("Tarea {} marcada como rechazada (cumpleNormativa=false)", tarea.getIdMuestraAnalisis());
+                }
+            }
+        }
 
         // Get rejected samples
         List<MuestraAnalisis> muestrasRechazadas = otOriginal.obtenerMuestrasRechazadas();

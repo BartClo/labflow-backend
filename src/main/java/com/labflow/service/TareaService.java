@@ -1,6 +1,7 @@
 package com.labflow.service;
 
 import com.labflow.dto.TareaPendienteDTO;
+import com.labflow.dto.request.GuardarResultadoSimpleDTO;
 import com.labflow.dto.request.ResultadoUpdateDTO;
 import com.labflow.exception.ResourceNotFoundException;
 import com.labflow.exception.ValidationException;
@@ -331,6 +332,66 @@ public class TareaService {
 
         logger.info("Se encontraron {} tipos de análisis con tareas pendientes", mapa.size());
         return mapa;
+    }
+
+    /**
+     * Guarda un resultado simple (un solo valor) capturado desde el modal de captura.
+     * Internamente construye el ResultadoUpdateDTO y delega a actualizarResultado().
+     */
+    public Map<String, Object> guardarResultadoSimple(GuardarResultadoSimpleDTO dto) {
+        UUID tareaId = dto.getIdMuestraAnalisis();
+        logger.info("Guardando resultado simple para tarea: {}", tareaId);
+
+        // Buscar la tarea
+        MuestraAnalisis tarea = muestraAnalisisRepository.findById(tareaId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Tarea no encontrada con ID: " + tareaId));
+
+        // Obtener los parámetros del análisis
+        UUID analisisId = tarea.getAnalisis().getIdAnalisis();
+        List<Parametro> parametrosDelAnalisis = parametroRepository.findByAnalisisId(analisisId);
+
+        if (parametrosDelAnalisis.isEmpty()) {
+            throw new ValidationException(
+                    "El análisis no tiene parámetros configurados. No se puede guardar el resultado.");
+        }
+
+        // Construir el ResultadoUpdateDTO a partir del valor simple
+        // Asignar el valor al primer parámetro (parámetro principal)
+        ResultadoUpdateDTO resultadoDTO = new ResultadoUpdateDTO();
+        Map<String, ResultadoUpdateDTO.ParametroResultadoDTO> parametrosMap = new HashMap<>();
+
+        Parametro parametroPrincipal = parametrosDelAnalisis.get(0);
+        parametrosMap.put(
+            parametroPrincipal.getNombre(),
+            new ResultadoUpdateDTO.ParametroResultadoDTO(
+                dto.getValorMedido(),
+                parametroPrincipal.getUnidad()
+            )
+        );
+
+        // Si hay más parámetros, los dejamos sin valor para que no se marque como completo prematuramente
+        resultadoDTO.setParametros(parametrosMap);
+
+        // Agregar observaciones como metadata si se proporcionaron
+        if (dto.getObservaciones() != null && !dto.getObservaciones().isBlank()) {
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("observaciones", dto.getObservaciones());
+            metadata.put("fecha_analisis", java.time.LocalDateTime.now().toString());
+            metadata.put("version_metodo", "NCh409/1:2005");
+            metadata.put("codigo_barras_capturado", dto.getCodigoBarras());
+            resultadoDTO.setMetadata(metadata);
+        }
+
+        // Delegar a la lógica existente de validación NCh 409
+        Map<String, Object> response = actualizarResultado(tareaId, resultadoDTO);
+
+        // Enriquecer respuesta con info adicional
+        response.put("tarea_id", tareaId.toString());
+        response.put("numero_muestra", tarea.getMuestra().getNumeroInterno());
+        response.put("nombre_analisis", tarea.getAnalisis().getNombreAnalisis());
+
+        return response;
     }
 
     /**

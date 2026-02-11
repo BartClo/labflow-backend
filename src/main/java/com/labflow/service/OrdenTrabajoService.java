@@ -9,6 +9,7 @@ import com.labflow.exception.ValidationException;
 import com.labflow.model.*;
 import com.labflow.repository.MuestraAnalisisRepository;
 import com.labflow.repository.OrdenTrabajoRepository;
+import com.labflow.repository.ParametroRepository;
 import com.labflow.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,9 @@ public class OrdenTrabajoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ParametroRepository parametroRepository;
 
     @Autowired
     @Lazy
@@ -310,14 +314,39 @@ public class OrdenTrabajoService {
 
     /**
      * Convierte MuestraAnalisis a TareaBasicDTO
+     * Incluye límites normativos del parámetro principal del análisis
      */
     private TareaBasicDTO convertirTareaBasicDto(MuestraAnalisis ma) {
         TareaBasicDTO dto = new TareaBasicDTO();
         dto.setIdMuestraAnalisis(ma.getIdMuestraAnalisis());
         dto.setNumeroMuestra(ma.getMuestra().getNumeroInterno());
+        dto.setCodigoBarras(ma.getMuestra().getCodigoBarras());
         dto.setNombreAnalisis(ma.getAnalisis().getNombreAnalisis());
         dto.setEstadoAnalisis(ma.getEstadoAnalisis().name());
         dto.setCumpleNormativa(ma.getCumpleNormativa());
+
+        // Enriquecer con límites del parámetro principal del análisis
+        try {
+            java.util.List<Parametro> parametros = parametroRepository.findByAnalisisId(
+                    ma.getAnalisis().getIdAnalisis());
+            if (!parametros.isEmpty()) {
+                Parametro param = parametros.get(0);
+                dto.setUnidadMedida(param.getUnidad());
+                dto.setLimiteMinimo(param.getValorMinimoNormativa());
+                dto.setLimiteMaximo(param.getValorMaximoNormativa());
+                dto.setNombreParametro(param.getNombre());
+                // Incluir el id de la muestra para permitir acciones sobre la muestra desde frontend
+                try {
+                    dto.setIdMuestra(ma.getMuestra().getIdMuestra());
+                } catch (Exception ex) {
+                    logger.debug("No se pudo obtener idMuestra para tarea {}: {}", ma.getIdMuestraAnalisis(), ex.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("No se pudieron cargar parámetros para análisis {}: {}",
+                    ma.getAnalisis().getIdAnalisis(), e.getMessage());
+        }
+
         return dto;
     }
 }

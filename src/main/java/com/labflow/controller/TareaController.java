@@ -1,6 +1,7 @@
 package com.labflow.controller;
 
 import com.labflow.dto.TareaPendienteDTO;
+import com.labflow.dto.request.GuardarResultadoSimpleDTO;
 import com.labflow.dto.request.ResultadoUpdateDTO;
 import com.labflow.service.TareaService;
 import jakarta.validation.Valid;
@@ -72,6 +73,21 @@ public class TareaController {
         TareaPendienteDTO tarea = tareaService.buscarPorCodigoBarras(codigo);
 
         return ResponseEntity.ok(tarea);
+    }
+
+    /**
+     * Guarda un resultado capturado de forma simplificada (un solo valor por muestra)
+     * POST /api/tareas/guardar-resultado
+     */
+    @PostMapping("/guardar-resultado")
+    public ResponseEntity<Map<String, Object>> guardarResultadoSimple(
+            @Valid @RequestBody GuardarResultadoSimpleDTO dto) {
+
+        logger.info("Guardando resultado simple para tarea: {}", dto.getIdMuestraAnalisis());
+
+        Map<String, Object> response = tareaService.guardarResultadoSimple(dto);
+
+        return ResponseEntity.ok(response);
     }
 
     /**
