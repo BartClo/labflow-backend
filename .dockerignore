@@ -55,7 +55,6 @@ Thumbs.db
 
 # Build scripts
 build.sh
-start.sh
 
 # Render specific
 render.yaml
