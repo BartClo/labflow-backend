@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -53,7 +54,6 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     @Override
-    @Transactional
     public void run(String... args) throws Exception {
         // Evitar duplicados si ya existen datos
         if (analisisRecursoRepo.count() > 0 && configControlRepo.count() > 0) {
@@ -68,7 +68,10 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void cargarInventario() {
-        try (InputStream is = getClass().getResourceAsStream("/data/Información laboratorio.xlsx")) {
+        try (InputStream is = openResource(
+                "/data/Información laboratorio.xlsx",
+                "/data/Informacion laboratorio.xlsx"
+        )) {
             if (is == null) {
                 log.warn("⚠️ Archivo de Inventario no encontrado en resources/data.");
                 return;
@@ -96,7 +99,7 @@ public class DataSeeder implements CommandLineRunner {
                             } else {
                                 Analisis nuevo = new Analisis();
                                 nuevo.setNombreAnalisis(nombreAnalisis);
-                                nuevo.setCodigo("GEN-" + System.currentTimeMillis());
+                                nuevo.setCodigo(generarCodigoAnalisis());
                                 nuevo.setCategoria("GENERAL");
                                 analisis = analisisRepo.save(nuevo);
                                 entityManager.flush(); // Asegurar que el análisis se persista antes de usarlo
@@ -116,7 +119,9 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void cargarReglasYLimites() {
-        try (InputStream is = getClass().getResourceAsStream("/data/Controles LABCAUSS.xlsx")) {
+        try (InputStream is = openResource(
+                "/data/Controles LABCAUSS.xlsx"
+        )) {
             if (is == null) {
                 log.warn("⚠️ Archivo de Controles no encontrado en resources/data.");
                 return;
@@ -262,6 +267,21 @@ public class DataSeeder implements CommandLineRunner {
         regla.setParametro(p);
         regla.setTipoControl(tipo);
         configControlRepo.save(regla);
+    }
+
+    private InputStream openResource(String... paths) {
+        for (String path : paths) {
+            InputStream stream = getClass().getResourceAsStream(path);
+            if (stream != null) {
+                log.info("📄 Recurso de seed encontrado: {}", path);
+                return stream;
+            }
+        }
+        return null;
+    }
+
+    private String generarCodigoAnalisis() {
+        return "GEN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
     private String getCellValue(Cell cell) {
