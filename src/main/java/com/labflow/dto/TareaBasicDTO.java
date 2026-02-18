@@ -41,6 +41,9 @@ public class TareaBasicDTO {
     @JsonProperty("nombre_parametro")
     private String nombreParametro;
 
+    @JsonProperty("prioridad")
+    private String prioridad;
+
     // Constructores
     public TareaBasicDTO() {
     }
@@ -132,5 +135,13 @@ public class TareaBasicDTO {
 
     public void setNombreParametro(String nombreParametro) {
         this.nombreParametro = nombreParametro;
+    }
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
     }
 }

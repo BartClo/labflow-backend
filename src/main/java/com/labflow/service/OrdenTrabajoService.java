@@ -325,6 +325,15 @@ public class OrdenTrabajoService {
         dto.setEstadoAnalisis(ma.getEstadoAnalisis().name());
         dto.setCumpleNormativa(ma.getCumpleNormativa());
 
+        // Incluir prioridad de la muestra
+        try {
+            if (ma.getMuestra() != null && ma.getMuestra().getPrioridad() != null) {
+                dto.setPrioridad(ma.getMuestra().getPrioridad().name());
+            }
+        } catch (Exception e) {
+            logger.debug("No se pudo obtener prioridad para tarea {}", ma.getIdMuestraAnalisis());
+        }
+
         // Enriquecer con límites del parámetro principal del análisis
         try {
             java.util.List<Parametro> parametros = parametroRepository.findByAnalisisId(
@@ -349,4 +358,46 @@ public class OrdenTrabajoService {
 
         return dto;
     }
+
+    /**
+     * Obtiene estadísticas del sistema de órdenes de trabajo
+     */
+    public EstadisticasOTDTO obtenerEstadisticas() {
+        logger.debug("Obteniendo estadísticas de órdenes de trabajo");
+
+        List<OrdenTrabajo> todasLasOT = ordenTrabajoRepository.findAll();
+
+        // OT Activas: ABIERTA o EN_PROCESO
+        long otActivas = todasLasOT.stream()
+                .filter(ot -> ot.getEstado() == EstadoOT.ABIERTA || ot.getEstado() == EstadoOT.EN_PROCESO)
+                .count();
+
+        // OT Urgentes: Calcular basándose en muestras con prioridad ALTA
+        long otUrgentes = todasLasOT.stream()
+                .filter(ot -> {
+                    if (ot.getEstado() == EstadoOT.ABIERTA || ot.getEstado() == EstadoOT.EN_PROCESO) {
+                        return ot.getTareas().stream()
+                                .anyMatch(t -> t.getMuestra() != null 
+                                        && t.getMuestra().getPrioridad() == Muestra.Prioridad.ALTA);
+                    }
+                    return false;
+                })
+                .count();
+
+        // OT En Proceso: solo EN_PROCESO
+        long otEnProceso = todasLasOT.stream()
+                .filter(ot -> ot.getEstado() == EstadoOT.EN_PROCESO)
+                .count();
+
+        return new EstadisticasOTDTO(otActivas, otUrgentes, otEnProceso);
+    }
+
+    /**
+     * DTO para estadísticas de órdenes de trabajo
+     */
+    public record EstadisticasOTDTO(
+            long otActivas,
+            long otUrgentes,
+            long otEnProceso
+    ) {}
 }

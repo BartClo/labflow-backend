@@ -7,6 +7,7 @@ import com.labflow.dto.WorkflowProgressDTO;
 import com.labflow.dto.request.OrdenTrabajoCreateDTO;
 import com.labflow.model.EstadoOT;
 import com.labflow.service.OrdenTrabajoService;
+import com.labflow.service.OrdenTrabajoService.EstadisticasOTDTO;
 import com.labflow.service.WorkflowService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -154,6 +155,19 @@ public class OrdenTrabajoController {
         OrdenTrabajoDTO nuevaOT = workflowService.crearOTConMuestrasRechazadas(id, tecnicoId, notas, tareaIds);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaOT);
+    }
+
+    /**
+     * Obtiene estadísticas del sistema de órdenes de trabajo
+     * GET /api/ordenes/estadisticas
+     */
+    @GetMapping("/estadisticas")
+    public ResponseEntity<EstadisticasOTDTO> obtenerEstadisticas() {
+        logger.info("Solicitud de estadísticas de órdenes de trabajo");
+
+        EstadisticasOTDTO estadisticas = ordenTrabajoService.obtenerEstadisticas();
+
+        return ResponseEntity.ok(estadisticas);
     }
 
     /**
