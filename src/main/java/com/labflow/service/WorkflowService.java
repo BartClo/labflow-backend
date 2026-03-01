@@ -13,7 +13,6 @@ import com.labflow.repository.OrdenTrabajoRepository;
 import com.labflow.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service for managing workflow stages in Órdenes de Trabajo.
@@ -32,22 +30,30 @@ import java.util.stream.Collectors;
 public class WorkflowService {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkflowService.class);
+    private static final String VALOR_ETAPA_POR_DEFECTO = "CUALQUIER";
+    private static final String ORDEN_TRABAJO_NO_ENCONTRADA = "Orden de Trabajo no encontrada con ID: ";
 
-    @Autowired
-    private OrdenTrabajoRepository ordenTrabajoRepository;
+    private final OrdenTrabajoRepository ordenTrabajoRepository;
 
-    @Autowired
-    private OrdenTrabajoEtapaRepository ordenTrabajoEtapaRepository;
+    private final OrdenTrabajoEtapaRepository ordenTrabajoEtapaRepository;
 
-    @Autowired
-    private MuestraAnalisisRepository muestraAnalisisRepository;
+    private final MuestraAnalisisRepository muestraAnalisisRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    @Lazy
-    private OrdenTrabajoService ordenTrabajoService;
+    private final OrdenTrabajoService ordenTrabajoService;
+
+    public WorkflowService(OrdenTrabajoRepository ordenTrabajoRepository,
+                           OrdenTrabajoEtapaRepository ordenTrabajoEtapaRepository,
+                           MuestraAnalisisRepository muestraAnalisisRepository,
+                           UsuarioRepository usuarioRepository,
+                           @Lazy OrdenTrabajoService ordenTrabajoService) {
+        this.ordenTrabajoRepository = ordenTrabajoRepository;
+        this.ordenTrabajoEtapaRepository = ordenTrabajoEtapaRepository;
+        this.muestraAnalisisRepository = muestraAnalisisRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.ordenTrabajoService = ordenTrabajoService;
+    }
 
     /**
      * Initializes the workflow for an Orden de Trabajo by creating all 4 stages.
@@ -92,11 +98,11 @@ public class WorkflowService {
      * @throws ResourceNotFoundException if OT not found
      * @throws ValidationException if stage cannot be advanced
      */
-    public WorkflowProgressDTO avanzarEtapa(UUID ordenTrabajoId, String notas) {
+    public WorkflowProgressDTO avanzarEtapa(UUID ordenTrabajoId, String notas, String valor) {
         logger.info("Avanzando etapa para OT ID: {}", ordenTrabajoId);
 
         OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Orden de Trabajo no encontrada con ID: " + ordenTrabajoId));
+            .orElseThrow(() -> new ResourceNotFoundException(ORDEN_TRABAJO_NO_ENCONTRADA + ordenTrabajoId));
 
         // Get current active stage
         OrdenTrabajoEtapa etapaActual = ordenTrabajo.obtenerEtapaActual();
@@ -113,8 +119,13 @@ public class WorkflowService {
             );
         }
 
-        // Complete current stage
-        etapaActual.completar(notas);
+        String valorEtapa = null;
+        if (etapaActual.getTipoEtapa() == TipoEtapaWorkflow.CONTROL_CALIDAD
+            || etapaActual.getTipoEtapa() == TipoEtapaWorkflow.VALIDACION_RESULTADOS) {
+            valorEtapa = (valor == null || valor.isBlank()) ? VALOR_ETAPA_POR_DEFECTO : valor;
+        }
+
+        etapaActual.completar(notas, valorEtapa);
         ordenTrabajoEtapaRepository.save(etapaActual);
         logger.info("Etapa '{}' completada para OT: {}", 
                 etapaActual.getTipoEtapa().getDisplayName(), ordenTrabajo.getCodigoOT());
@@ -154,14 +165,14 @@ public class WorkflowService {
         logger.debug("Obteniendo progreso de workflow para OT ID: {}", ordenTrabajoId);
 
         OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(ordenTrabajoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Orden de Trabajo no encontrada con ID: " + ordenTrabajoId));
+            .orElseThrow(() -> new ResourceNotFoundException(ORDEN_TRABAJO_NO_ENCONTRADA + ordenTrabajoId));
 
         List<OrdenTrabajoEtapa> etapas = ordenTrabajoEtapaRepository
                 .findByOrdenTrabajoOrderByOrdenSecuenciaAsc(ordenTrabajo);
 
         List<OrdenTrabajoEtapaDTO> etapasDTO = etapas.stream()
                 .map(this::convertirEtapaADto)
-                .collect(Collectors.toList());
+            .toList();
 
         return new WorkflowProgressDTO(etapasDTO);
     }
@@ -181,7 +192,7 @@ public class WorkflowService {
         logger.info("Creando nueva OT con muestras rechazadas de OT ID: {}", ordenTrabajoOriginalId);
 
         OrdenTrabajo otOriginal = ordenTrabajoRepository.findById(ordenTrabajoOriginalId)
-                .orElseThrow(() -> new ResourceNotFoundException("Orden de Trabajo no encontrada con ID: " + ordenTrabajoOriginalId));
+            .orElseThrow(() -> new ResourceNotFoundException(ORDEN_TRABAJO_NO_ENCONTRADA + ordenTrabajoOriginalId));
 
         // Get rejected samples
         List<MuestraAnalisis> muestrasRechazadas = otOriginal.obtenerMuestrasRechazadas();
@@ -207,7 +218,7 @@ public class WorkflowService {
         // Reset rejected samples to PENDIENTE so they can be reassigned
         List<UUID> tareaIds = muestrasRechazadas.stream()
                 .map(MuestraAnalisis::getIdMuestraAnalisis)
-                .collect(Collectors.toList());
+            .toList();
 
         // Remove from original OT
         for (MuestraAnalisis tarea : muestrasRechazadas) {
@@ -247,6 +258,7 @@ public class WorkflowService {
         dto.setFechaInicio(etapa.getFechaInicio());
         dto.setFechaCompletado(etapa.getFechaCompletado());
         dto.setNotas(etapa.getNotas());
+        dto.setValor(etapa.getValorEtapa());
         dto.setCreatedAt(etapa.getCreatedAt());
         dto.setUpdatedAt(etapa.getUpdatedAt());
 

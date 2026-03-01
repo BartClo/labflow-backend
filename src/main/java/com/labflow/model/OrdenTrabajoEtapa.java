@@ -45,6 +45,9 @@ public class OrdenTrabajoEtapa {
     @Column(name = "notas", columnDefinition = "TEXT")
     private String notas;
 
+    @Column(name = "valor_etapa", columnDefinition = "TEXT")
+    private String valorEtapa;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -85,7 +88,7 @@ public class OrdenTrabajoEtapa {
      * @param notas Optional notes about the stage completion
      * @throws IllegalStateException if the stage is not in EN_PROGRESO state
      */
-    public void completar(String notas) {
+    public void completar(String notas, String valorEtapa) {
         if (!estadoEtapa.puedeCompletar()) {
             throw new IllegalStateException(
                 String.format("No se puede completar la etapa %s. Estado actual: %s", 
@@ -96,6 +99,9 @@ public class OrdenTrabajoEtapa {
         this.fechaCompletado = LocalDateTime.now();
         if (notas != null && !notas.trim().isEmpty()) {
             this.notas = notas;
+        }
+        if (valorEtapa != null && !valorEtapa.trim().isEmpty()) {
+            this.valorEtapa = valorEtapa;
         }
     }
 
@@ -222,5 +228,13 @@ public class OrdenTrabajoEtapa {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getValorEtapa() {
+        return valorEtapa;
+    }
+
+    public void setValorEtapa(String valorEtapa) {
+        this.valorEtapa = valorEtapa;
     }
 }

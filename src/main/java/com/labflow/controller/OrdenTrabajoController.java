@@ -11,7 +11,6 @@ import com.labflow.service.WorkflowService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +27,14 @@ public class OrdenTrabajoController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrdenTrabajoController.class);
 
-    @Autowired
-    private OrdenTrabajoService ordenTrabajoService;
+    private final OrdenTrabajoService ordenTrabajoService;
 
-    @Autowired
-    private WorkflowService workflowService;
+    private final WorkflowService workflowService;
+
+    public OrdenTrabajoController(OrdenTrabajoService ordenTrabajoService, WorkflowService workflowService) {
+        this.ordenTrabajoService = ordenTrabajoService;
+        this.workflowService = workflowService;
+    }
 
     /**
      * Crea una nueva orden de trabajo agrupando tareas
@@ -131,7 +133,8 @@ public class OrdenTrabajoController {
         logger.info("Completando etapa actual de orden: {}", id);
 
         String notas = (dto != null) ? dto.getNotas() : null;
-        WorkflowProgressDTO progreso = workflowService.avanzarEtapa(id, notas);
+        String valor = (dto != null) ? dto.getValor() : null;
+        WorkflowProgressDTO progreso = workflowService.avanzarEtapa(id, notas, valor);
 
         return ResponseEntity.ok(progreso);
     }
