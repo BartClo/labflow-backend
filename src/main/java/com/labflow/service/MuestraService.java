@@ -233,6 +233,20 @@ public class MuestraService {
         return convertirADTO(muestra);
     }
 
+    public MuestraDTO cambiarPrioridad(UUID id, String nuevaPrioridad) {
+        Muestra muestra = muestraRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(MUESTRA_NO_ENCONTRADA + id));
+
+        Muestra.Prioridad prioridadEnum = parsePrioridad(nuevaPrioridad);
+        if (prioridadEnum == null) {
+            throw new ValidationException("La prioridad es requerida");
+        }
+
+        muestra.setPrioridad(prioridadEnum);
+        muestra = muestraRepository.save(muestra);
+        return convertirADTO(muestra);
+    }
+
     /**
      * Agregar análisis a una muestra existente
      */
