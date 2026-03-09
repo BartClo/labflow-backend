@@ -52,6 +52,11 @@ public interface OrdenTrabajoRepository extends JpaRepository<OrdenTrabajo, UUID
     List<OrdenTrabajo> findAllByOrderByFechaCreacionDesc();
 
     /**
+     * Obtiene órdenes filtradas por prioridad y ordenadas por fecha de creación descendente
+     */
+    List<OrdenTrabajo> findByPrioridadOrderByFechaCreacionDesc(OrdenTrabajo.PrioridadOT prioridad);
+
+    /**
      * Encuentra la última orden de trabajo cuyo código empiece con el prefijo dado
      * Usado para generación automática de código OT secuencial
      */

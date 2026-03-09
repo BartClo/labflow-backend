@@ -2,6 +2,7 @@ package com.labflow.controller;
 
 import com.labflow.dto.CompletarEtapaDTO;
 import com.labflow.dto.CrearOTRechazadasDTO;
+import com.labflow.dto.ActualizarPrioridadOTDTO;
 import com.labflow.dto.OrdenTrabajoDTO;
 import com.labflow.dto.WorkflowProgressDTO;
 import com.labflow.dto.request.OrdenTrabajoCreateDTO;
@@ -69,10 +70,11 @@ public class OrdenTrabajoController {
      * GET /api/ordenes
      */
     @GetMapping
-    public ResponseEntity<List<OrdenTrabajoDTO>> listarOrdenesDeTrabajo() {
+    public ResponseEntity<List<OrdenTrabajoDTO>> listarOrdenesDeTrabajo(
+            @RequestParam(required = false) String prioridad) {
         logger.info("Solicitud de lista de órdenes de trabajo");
 
-        List<OrdenTrabajoDTO> ordenes = ordenTrabajoService.listarOrdenesDetrabajo();
+        List<OrdenTrabajoDTO> ordenes = ordenTrabajoService.listarOrdenesDetrabajo(prioridad);
 
         return ResponseEntity.ok(ordenes);
     }
@@ -104,6 +106,22 @@ public class OrdenTrabajoController {
         logger.info("Actualizando estado de orden {} a: {}", id, estado);
 
         OrdenTrabajoDTO ordenActualizada = ordenTrabajoService.actualizarEstado(id, estado);
+
+        return ResponseEntity.ok(ordenActualizada);
+    }
+
+    /**
+     * Actualiza la prioridad de una orden de trabajo
+     * PATCH /api/ordenes/{id}/prioridad
+     */
+    @PatchMapping("/{id}/prioridad")
+    public ResponseEntity<OrdenTrabajoDTO> actualizarPrioridad(
+            @PathVariable UUID id,
+            @Valid @RequestBody ActualizarPrioridadOTDTO dto) {
+
+        logger.info("Actualizando prioridad de orden {}", id);
+
+        OrdenTrabajoDTO ordenActualizada = ordenTrabajoService.cambiarPrioridad(id, dto.getPrioridad());
 
         return ResponseEntity.ok(ordenActualizada);
     }

@@ -26,6 +26,10 @@ public class OrdenTrabajo {
     @Column(name = "estado", nullable = false, length = 20)
     private EstadoOT estado;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "prioridad", nullable = false, length = 20)
+    private PrioridadOT prioridad;
+
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
 
@@ -51,8 +55,13 @@ public class OrdenTrabajo {
     // Constructors
     public OrdenTrabajo() {
         this.estado = EstadoOT.ABIERTA;
+        this.prioridad = PrioridadOT.MEDIA;
         this.fechaCreacion = LocalDateTime.now();
         this.createdAt = LocalDateTime.now();
+    }
+
+    public enum PrioridadOT {
+        BAJA, MEDIA, ALTA
     }
 
     @PreUpdate
@@ -83,6 +92,14 @@ public class OrdenTrabajo {
 
     public void setEstado(EstadoOT estado) {
         this.estado = estado;
+    }
+
+    public PrioridadOT getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(PrioridadOT prioridad) {
+        this.prioridad = prioridad;
     }
 
     public LocalDateTime getFechaCreacion() {

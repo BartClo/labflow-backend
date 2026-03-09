@@ -19,6 +19,9 @@ public class OrdenTrabajoDTO {
     @JsonProperty("estado")
     private String estado;
 
+    @JsonProperty("prioridad")
+    private String prioridad;
+
     @JsonProperty("fecha_creacion")
     private LocalDateTime fechaCreacion;
 
@@ -73,6 +76,14 @@ public class OrdenTrabajoDTO {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
     }
 
     public LocalDateTime getFechaCreacion() {
