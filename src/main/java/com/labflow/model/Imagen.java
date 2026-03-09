@@ -18,9 +18,8 @@ public class Imagen {
     @JoinColumn(name = "id_muestra", nullable = false, unique = true)
     private Muestra muestra;
 
-    @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Column(name = "contenido", nullable = false)
+    @Column(name = "contenido", nullable = false, columnDefinition = "BYTEA")
     private byte[] contenido;
 
     @Column(name = "mime_type", nullable = false, length = 100)
