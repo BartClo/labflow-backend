@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -130,6 +131,7 @@ public class OrdenTrabajoService {
         ordenTrabajo.setCodigoOT(generarCodigoOT());
         ordenTrabajo.setTecnicoAsignado(tecnico);
         ordenTrabajo.setEstado(EstadoOT.ABIERTA);
+        ordenTrabajo.setPrioridad(parsePrioridadConDefault(dto.getPrioridad()));
 
         // Guardar la orden de trabajo
         ordenTrabajo = ordenTrabajoRepository.save(ordenTrabajo);
@@ -173,8 +175,15 @@ public class OrdenTrabajoService {
      * Lista todas las órdenes de trabajo
      */
     @Transactional(readOnly = true)
-    public List<OrdenTrabajoDTO> listarOrdenesDetrabajo() {
-        List<OrdenTrabajo> ordenes = ordenTrabajoRepository.findAllByOrderByFechaCreacionDesc();
+    public List<OrdenTrabajoDTO> listarOrdenesDetrabajo(String prioridadRaw) {
+        OrdenTrabajo.PrioridadOT prioridad = parsePrioridad(prioridadRaw);
+
+        List<OrdenTrabajo> ordenes;
+        if (prioridad != null) {
+            ordenes = ordenTrabajoRepository.findByPrioridadOrderByFechaCreacionDesc(prioridad);
+        } else {
+            ordenes = ordenTrabajoRepository.findAllByOrderByFechaCreacionDesc();
+        }
 
         return ordenes.stream()
                 .map(ot -> {
@@ -182,6 +191,23 @@ public class OrdenTrabajoService {
                     return convertirADto(ot, tareas);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public OrdenTrabajoDTO cambiarPrioridad(UUID id, String nuevaPrioridad) {
+        OrdenTrabajo ordenTrabajo = ordenTrabajoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Orden de trabajo no encontrada con ID: " + id));
+
+        if (nuevaPrioridad == null || nuevaPrioridad.isBlank()) {
+            throw new ValidationException("La prioridad es requerida");
+        }
+        OrdenTrabajo.PrioridadOT prioridad = parsePrioridad(nuevaPrioridad);
+
+        ordenTrabajo.setPrioridad(prioridad);
+        ordenTrabajo = ordenTrabajoRepository.save(ordenTrabajo);
+
+        List<MuestraAnalisis> tareas = muestraAnalisisRepository.findByOrdenTrabajo(ordenTrabajo);
+        return convertirADto(ordenTrabajo, tareas);
     }
 
     /**
@@ -241,6 +267,7 @@ public class OrdenTrabajoService {
         dto.setIdOrdenTrabajo(ordenTrabajo.getId());
         dto.setCodigoOT(ordenTrabajo.getCodigoOT());
         dto.setEstado(ordenTrabajo.getEstado().name());
+        dto.setPrioridad(ordenTrabajo.getPrioridad().name());
         dto.setFechaCreacion(ordenTrabajo.getFechaCreacion());
         dto.setFechaFinalizacion(ordenTrabajo.getFechaFinalizacion());
 
@@ -359,6 +386,7 @@ public class OrdenTrabajoService {
         return dto;
     }
 
+<<<<<<< HEAD
     /**
      * Obtiene estadísticas del sistema de órdenes de trabajo
      */
@@ -400,4 +428,22 @@ public class OrdenTrabajoService {
             long otUrgentes,
             long otEnProceso
     ) {}
+=======
+    private OrdenTrabajo.PrioridadOT parsePrioridad(String prioridadRaw) {
+        if (prioridadRaw == null || prioridadRaw.isBlank()) {
+            return null;
+        }
+
+        try {
+            return OrdenTrabajo.PrioridadOT.valueOf(prioridadRaw.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("La prioridad debe ser ALTA, MEDIA o BAJA");
+        }
+    }
+
+    private OrdenTrabajo.PrioridadOT parsePrioridadConDefault(String prioridadRaw) {
+        OrdenTrabajo.PrioridadOT prioridad = parsePrioridad(prioridadRaw);
+        return prioridad != null ? prioridad : OrdenTrabajo.PrioridadOT.MEDIA;
+    }
+>>>>>>> 9b3ab914229399a28558396a282b045248dc1811
 }

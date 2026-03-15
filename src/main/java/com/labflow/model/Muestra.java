@@ -132,6 +132,9 @@ public class Muestra {
     @JsonManagedReference
     private Set<MuestraAnalisis> muestraAnalisis;
 
+    @OneToOne(mappedBy = "muestra", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Imagen imagen;
+
     // Relaciones con plantillas
     @OneToMany(mappedBy = "muestra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -383,6 +386,14 @@ public class Muestra {
 
     public void setMuestraAnalisis(Set<MuestraAnalisis> muestraAnalisis) {
         this.muestraAnalisis = muestraAnalisis;
+    }
+
+    public Imagen getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(Imagen imagen) {
+        this.imagen = imagen;
     }
 
     public Set<MuestraPlantilla> getMuestraPlantillas() {

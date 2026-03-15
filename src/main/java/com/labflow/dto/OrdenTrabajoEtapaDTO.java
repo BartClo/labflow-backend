@@ -42,15 +42,14 @@ public class OrdenTrabajoEtapaDTO {
     @JsonProperty("notas")
     private String notas;
 
+    @JsonProperty("valor")
+    private String valor;
+
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
     @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
-
-    // Constructors
-    public OrdenTrabajoEtapaDTO() {
-    }
 
     // Getters and Setters
     public UUID getIdEtapa() {
@@ -139,6 +138,14 @@ public class OrdenTrabajoEtapaDTO {
 
     public void setNotas(String notas) {
         this.notas = notas;
+    }
+
+    public String getValor() {
+        return valor;
+    }
+
+    public void setValor(String valor) {
+        this.valor = valor;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -2,13 +2,13 @@ package com.labflow.config;
 
 import com.labflow.model.*;
 import com.labflow.repository.*;
+import com.labflow.util.StringSanitizer;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -24,6 +25,7 @@ public class DataSeeder implements CommandLineRunner {
     private static final String TIPO_EQUIPO = "EQUIPO";
     private static final String TIPO_REACTIVO = "REACTIVO";
     private static final String TIPO_INSUMO = "INSUMO";
+    private static final String ANALISIS_PARAMETROS_CALIDAD = "PARAMETROS DE CALIDAD";
 
     private final AnalisisRepository analisisRepo;
     private final ParametroRepository parametroRepo;
@@ -32,6 +34,7 @@ public class DataSeeder implements CommandLineRunner {
     private final InsumoRepository insumoRepo;
     private final AnalisisRecursoRepository analisisRecursoRepo;
     private final ConfigControlCalidadRepository configControlRepo;
+    private final DataFormatter dataFormatter = new DataFormatter();
     
     @PersistenceContext
     private EntityManager entityManager;
@@ -53,7 +56,6 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     @Override
-    @Transactional
     public void run(String... args) throws Exception {
         // Evitar duplicados si ya existen datos
         if (analisisRecursoRepo.count() > 0 && configControlRepo.count() > 0) {
@@ -68,7 +70,10 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void cargarInventario() {
-        try (InputStream is = getClass().getResourceAsStream("/data/Información laboratorio.xlsx")) {
+        try (InputStream is = openResource(
+                "/data/Información laboratorio.xlsx",
+                "/data/Informacion laboratorio.xlsx"
+        )) {
             if (is == null) {
                 log.warn("⚠️ Archivo de Inventario no encontrado en resources/data.");
                 return;
@@ -84,9 +89,9 @@ public class DataSeeder implements CommandLineRunner {
                     
                     if (row != null) {
                         // COLUMNA A: Nombre del Análisis
-                        String nombreAnalisis = getCellValue(row.getCell(0));
+                        String nombreAnalisis = StringSanitizer.normalizarParaComparar(getCellValue(row.getCell(0)));
                         
-                        if (!nombreAnalisis.isEmpty() && !nombreAnalisis.toLowerCase().contains("método")) {
+                        if (!nombreAnalisis.isEmpty() && !nombreAnalisis.contains("METODO")) {
                             Optional<Analisis> analisisOpt = analisisRepo.findByNombre(nombreAnalisis);
 
                             // Si el análisis no existe, lo creamos temporalmente
@@ -96,7 +101,7 @@ public class DataSeeder implements CommandLineRunner {
                             } else {
                                 Analisis nuevo = new Analisis();
                                 nuevo.setNombreAnalisis(nombreAnalisis);
-                                nuevo.setCodigo("GEN-" + System.currentTimeMillis());
+                                nuevo.setCodigo(generarCodigoAnalisis());
                                 nuevo.setCategoria("GENERAL");
                                 analisis = analisisRepo.save(nuevo);
                                 entityManager.flush(); // Asegurar que el análisis se persista antes de usarlo
@@ -116,7 +121,9 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void cargarReglasYLimites() {
-        try (InputStream is = getClass().getResourceAsStream("/data/Controles LABCAUSS.xlsx")) {
+        try (InputStream is = openResource(
+                "/data/Controles LABCAUSS.xlsx"
+        )) {
             if (is == null) {
                 log.warn("⚠️ Archivo de Controles no encontrado en resources/data.");
                 return;
@@ -130,10 +137,10 @@ public class DataSeeder implements CommandLineRunner {
                 log.info("📏 Procesando Límites Normativos y Criterios de Calidad...");
 
                 // Obtener o crear un análisis genérico para parámetros sin análisis específico
-                Analisis analisisGenerico = analisisRepo.findByNombre("Parámetros de Calidad")
+                Analisis analisisGenerico = analisisRepo.findByNombre(ANALISIS_PARAMETROS_CALIDAD)
                         .orElseGet(() -> {
                             Analisis nuevo = new Analisis();
-                            nuevo.setNombreAnalisis("Parámetros de Calidad");
+                            nuevo.setNombreAnalisis(ANALISIS_PARAMETROS_CALIDAD);
                             nuevo.setCodigo("PARAM-QC");
                             nuevo.setCategoria("CONTROL_CALIDAD");
                             nuevo.setEstado("Activo");
@@ -149,7 +156,7 @@ public class DataSeeder implements CommandLineRunner {
                     
                     if (row != null) {
                         // COLUMNA A: Analito (Parámetro)
-                        String nombreParametro = getCellValue(row.getCell(0));
+                        String nombreParametro = StringSanitizer.normalizarParaComparar(getCellValue(row.getCell(0)));
                         
                         if (!nombreParametro.isEmpty()) {
                             // COLUMNA B: Límite Normativo
@@ -217,10 +224,10 @@ public class DataSeeder implements CommandLineRunner {
         String texto = getCellValue(cell);
         if (texto.isEmpty()) return;
 
-        String[] items = texto.split("[\n,•]");
+        String[] items = texto.split("[\n•;]+");
 
         for (String itemRaw : items) {
-            final String item = itemRaw.trim();
+            final String item = StringSanitizer.normalizarParaComparar(itemRaw);
             
             if (item.length() >= 3) {
                 AnalisisRecurso recurso = new AnalisisRecurso();
@@ -256,7 +263,8 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void crearReglaCalidad(Parametro p, String tipo, String valorExcel) {
-        if (valorExcel.isEmpty() || valorExcel.toLowerCase().contains("no procede") || valorExcel.toLowerCase().contains("no aplica")) return;
+        String valorNormalizado = StringSanitizer.normalizarParaComparar(valorExcel);
+        if (valorNormalizado.isEmpty() || valorNormalizado.contains("NO PROCEDE") || valorNormalizado.contains("NO APLICA")) return;
         
         ConfigControlCalidad regla = new ConfigControlCalidad();
         regla.setParametro(p);
@@ -264,15 +272,28 @@ public class DataSeeder implements CommandLineRunner {
         configControlRepo.save(regla);
     }
 
+    private InputStream openResource(String... paths) {
+        for (String path : paths) {
+            InputStream stream = getClass().getResourceAsStream(path);
+            if (stream != null) {
+                log.info("📄 Recurso de seed encontrado: {}", path);
+                return stream;
+            }
+        }
+        return null;
+    }
+
+    private String generarCodigoAnalisis() {
+        return "GEN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
     private String getCellValue(Cell cell) {
         if (cell == null) {
             return "";
         }
         return switch (cell.getCellType()) {
-            case STRING -> cell.getStringCellValue().trim();
-            case NUMERIC -> String.valueOf(cell.getNumericCellValue());
-            case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
-            case FORMULA, BLANK, ERROR, _NONE -> "";
+            case STRING, NUMERIC, BOOLEAN, FORMULA -> StringSanitizer.limpiarParaFrontend(dataFormatter.formatCellValue(cell));
+            case BLANK, ERROR, _NONE -> "";
         };
     }
 }

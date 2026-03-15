@@ -3,6 +3,7 @@ package com.labflow.dto.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +21,10 @@ public class OrdenTrabajoCreateDTO {
     @JsonProperty("tecnico_asignado_id")
     private UUID tecnicoAsignadoId;
 
+    @Pattern(regexp = "(?i)(alta|media|baja)", message = "La prioridad debe ser alta, media o baja")
+    @JsonProperty("prioridad")
+    private String prioridad = "media";
+
     // Constructores
     public OrdenTrabajoCreateDTO() {
     }
@@ -27,6 +32,12 @@ public class OrdenTrabajoCreateDTO {
     public OrdenTrabajoCreateDTO(List<UUID> tareaIds, UUID tecnicoAsignadoId) {
         this.tareaIds = tareaIds;
         this.tecnicoAsignadoId = tecnicoAsignadoId;
+    }
+
+    public OrdenTrabajoCreateDTO(List<UUID> tareaIds, UUID tecnicoAsignadoId, String prioridad) {
+        this.tareaIds = tareaIds;
+        this.tecnicoAsignadoId = tecnicoAsignadoId;
+        this.prioridad = prioridad;
     }
 
     // Getters and Setters
@@ -44,5 +55,13 @@ public class OrdenTrabajoCreateDTO {
 
     public void setTecnicoAsignadoId(UUID tecnicoAsignadoId) {
         this.tecnicoAsignadoId = tecnicoAsignadoId;
+    }
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
     }
 }

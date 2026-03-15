@@ -2,6 +2,7 @@ package com.labflow.controller;
 
 import com.labflow.dto.CompletarEtapaDTO;
 import com.labflow.dto.CrearOTRechazadasDTO;
+import com.labflow.dto.ActualizarPrioridadOTDTO;
 import com.labflow.dto.OrdenTrabajoDTO;
 import com.labflow.dto.WorkflowProgressDTO;
 import com.labflow.dto.request.OrdenTrabajoCreateDTO;
@@ -12,7 +13,6 @@ import com.labflow.service.WorkflowService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +29,14 @@ public class OrdenTrabajoController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrdenTrabajoController.class);
 
-    @Autowired
-    private OrdenTrabajoService ordenTrabajoService;
+    private final OrdenTrabajoService ordenTrabajoService;
 
-    @Autowired
-    private WorkflowService workflowService;
+    private final WorkflowService workflowService;
+
+    public OrdenTrabajoController(OrdenTrabajoService ordenTrabajoService, WorkflowService workflowService) {
+        this.ordenTrabajoService = ordenTrabajoService;
+        this.workflowService = workflowService;
+    }
 
     /**
      * Crea una nueva orden de trabajo agrupando tareas
@@ -68,10 +71,11 @@ public class OrdenTrabajoController {
      * GET /api/ordenes
      */
     @GetMapping
-    public ResponseEntity<List<OrdenTrabajoDTO>> listarOrdenesDeTrabajo() {
+    public ResponseEntity<List<OrdenTrabajoDTO>> listarOrdenesDeTrabajo(
+            @RequestParam(required = false) String prioridad) {
         logger.info("Solicitud de lista de órdenes de trabajo");
 
-        List<OrdenTrabajoDTO> ordenes = ordenTrabajoService.listarOrdenesDetrabajo();
+        List<OrdenTrabajoDTO> ordenes = ordenTrabajoService.listarOrdenesDetrabajo(prioridad);
 
         return ResponseEntity.ok(ordenes);
     }
@@ -108,6 +112,22 @@ public class OrdenTrabajoController {
     }
 
     /**
+     * Actualiza la prioridad de una orden de trabajo
+     * PATCH /api/ordenes/{id}/prioridad
+     */
+    @PatchMapping("/{id}/prioridad")
+    public ResponseEntity<OrdenTrabajoDTO> actualizarPrioridad(
+            @PathVariable UUID id,
+            @Valid @RequestBody ActualizarPrioridadOTDTO dto) {
+
+        logger.info("Actualizando prioridad de orden {}", id);
+
+        OrdenTrabajoDTO ordenActualizada = ordenTrabajoService.cambiarPrioridad(id, dto.getPrioridad());
+
+        return ResponseEntity.ok(ordenActualizada);
+    }
+
+    /**
      * Obtiene el progreso del workflow de una orden de trabajo
      * GET /api/ordenes/{id}/workflow
      */
@@ -132,7 +152,8 @@ public class OrdenTrabajoController {
         logger.info("Completando etapa actual de orden: {}", id);
 
         String notas = (dto != null) ? dto.getNotas() : null;
-        WorkflowProgressDTO progreso = workflowService.avanzarEtapa(id, notas);
+        String valor = (dto != null) ? dto.getValor() : null;
+        WorkflowProgressDTO progreso = workflowService.avanzarEtapa(id, notas, valor);
 
         return ResponseEntity.ok(progreso);
     }

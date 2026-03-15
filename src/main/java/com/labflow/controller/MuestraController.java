@@ -1,5 +1,6 @@
 package com.labflow.controller;
 
+import com.labflow.dto.ActualizarPrioridadDTO;
 import com.labflow.dto.MuestraCreateDTO;
 import com.labflow.dto.MuestraDTO;
 import com.labflow.dto.MuestraPageResponse;
@@ -196,6 +197,22 @@ public class MuestraController {
                       schema = @Schema(allowableValues = {"RECIBIDA", "EN_PROCESO", "ANALIZADA", "COMPLETADA", "RECHAZADA"}))
             @RequestParam String estado) {
         MuestraDTO muestra = muestraService.cambiarEstado(id, estado);
+        return ResponseEntity.ok(muestra);
+    }
+
+    @Operation(summary = "Cambiar prioridad de muestra",
+               description = "Actualiza la prioridad de una muestra específica")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Prioridad actualizada exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Prioridad inválida"),
+        @ApiResponse(responseCode = "404", description = "Muestra no encontrada")
+    })
+    @PatchMapping("/{id}/prioridad")
+    public ResponseEntity<MuestraDTO> cambiarPrioridad(
+            @Parameter(description = "ID único de la muestra")
+            @PathVariable UUID id,
+            @Valid @RequestBody ActualizarPrioridadDTO dto) {
+        MuestraDTO muestra = muestraService.cambiarPrioridad(id, dto.getPrioridad());
         return ResponseEntity.ok(muestra);
     }
 

@@ -13,6 +13,10 @@ public class CompletarEtapaDTO {
     @Size(max = 5000, message = "Las notas no pueden exceder 5000 caracteres")
     private String notas;
 
+    @JsonProperty("valor")
+    @Size(max = 5000, message = "El valor no puede exceder 5000 caracteres")
+    private String valor;
+
     // Constructors
     public CompletarEtapaDTO() {
     }
@@ -28,5 +32,13 @@ public class CompletarEtapaDTO {
 
     public void setNotas(String notas) {
         this.notas = notas;
+    }
+
+    public String getValor() {
+        return valor;
+    }
+
+    public void setValor(String valor) {
+        this.valor = valor;
     }
 }
