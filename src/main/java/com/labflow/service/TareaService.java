@@ -85,30 +85,49 @@ public class TareaService {
 
             // Buscar el parámetro en la base de datos
             Parametro parametro = parametrosMap.get(nombreParametro);
-            if (parametro == null) {
-                logger.warn("Parámetro '{}' no encontrado en el análisis", nombreParametro);
+            
+            Map<String, Object> paramResultado = new HashMap<>();
+            
+            if (parametro != null) {
+                // Validar contra NCh 409 (Caso con parametro configurado)
+                boolean cumpleNormativa = validarParametroContraNormativa(
+                        paramDto.getValor(),
+                        parametro.getValorMaximoNormativa()
+                );
+
+                if (!cumpleNormativa) {
+                    todoCumpleNormativa = false;
+                    parametrosNoCumplen.add(nombreParametro);
+                }
+                
+                paramResultado.put("valor", paramDto.getValor());
+                paramResultado.put("unidad", paramDto.getUnidad() != null ? paramDto.getUnidad() : parametro.getUnidad());
+                paramResultado.put("cumple_normativa", cumpleNormativa);
+                paramResultado.put("valor_maximo_normativa", parametro.getValorMaximoNormativa());
+                if (paramDto.getObservaciones() != null) {
+                    paramResultado.put("observaciones", paramDto.getObservaciones());
+                }
+                
+                parametrosResultado.put(nombreParametro, paramResultado);
+
+            } else if (parametrosMap.isEmpty()) {
+                // Caso AD-HOC: Análisis sin parámetros configurados
+                // Se guarda el valor tal cual, asumiendo cumplimiento normativo (o no aplicable)
+                // y usando la unidad proporcionada si existe
+                
+                paramResultado.put("valor", paramDto.getValor());
+                paramResultado.put("unidad", paramDto.getUnidad());
+                paramResultado.put("cumple_normativa", true); // Asumimos OK 
+                paramResultado.put("valor_maximo_normativa", null);
+                if (paramDto.getObservaciones() != null) {
+                    paramResultado.put("observaciones", paramDto.getObservaciones());
+                }
+                
+                parametrosResultado.put(nombreParametro, paramResultado);
+            } else {
+                logger.warn("Parámetro '{}' no encontrado en el análisis (y existen otros configurados)", nombreParametro);
                 continue;
             }
-
-            // Validar contra NCh 409
-            boolean cumpleNormativa = validarParametroContraNormativa(
-                    paramDto.getValor(),
-                    parametro.getValorMaximoNormativa()
-            );
-
-            if (!cumpleNormativa) {
-                todoCumpleNormativa = false;
-                parametrosNoCumplen.add(nombreParametro);
-            }
-
-            // Construir objeto de resultado para este parámetro
-            Map<String, Object> paramResultado = new HashMap<>();
-            paramResultado.put("valor", paramDto.getValor());
-            paramResultado.put("unidad", paramDto.getUnidad() != null ? paramDto.getUnidad() : parametro.getUnidad());
-            paramResultado.put("cumple_normativa", cumpleNormativa);
-            paramResultado.put("valor_maximo_normativa", parametro.getValorMaximoNormativa());
-
-            parametrosResultado.put(nombreParametro, paramResultado);
         }
 
         resultadoJson.put("parametros", parametrosResultado);
@@ -351,24 +370,30 @@ public class TareaService {
         UUID analisisId = tarea.getAnalisis().getIdAnalisis();
         List<Parametro> parametrosDelAnalisis = parametroRepository.findByAnalisisId(analisisId);
 
-        if (parametrosDelAnalisis.isEmpty()) {
-            throw new ValidationException(
-                    "El análisis no tiene parámetros configurados. No se puede guardar el resultado.");
-        }
-
         // Construir el ResultadoUpdateDTO a partir del valor simple
-        // Asignar el valor al primer parámetro (parámetro principal)
         ResultadoUpdateDTO resultadoDTO = new ResultadoUpdateDTO();
         Map<String, ResultadoUpdateDTO.ParametroResultadoDTO> parametrosMap = new HashMap<>();
 
-        Parametro parametroPrincipal = parametrosDelAnalisis.get(0);
-        parametrosMap.put(
-            parametroPrincipal.getNombre(),
-            new ResultadoUpdateDTO.ParametroResultadoDTO(
-                dto.getValorMedido(),
-                parametroPrincipal.getUnidad()
-            )
-        );
+        if (!parametrosDelAnalisis.isEmpty()) {
+            Parametro parametroPrincipal = parametrosDelAnalisis.get(0);
+            parametrosMap.put(
+                parametroPrincipal.getNombre(),
+                new ResultadoUpdateDTO.ParametroResultadoDTO(
+                    dto.getValorMedido(),
+                    parametroPrincipal.getUnidad()
+                )
+            );
+        } else {
+            // Caso sin parámetros configurados de forma explícita: usar nombre análisis
+            String nombreAnalisis = tarea.getAnalisis().getNombreAnalisis();
+            parametrosMap.put(
+                nombreAnalisis,
+                new ResultadoUpdateDTO.ParametroResultadoDTO(
+                    dto.getValorMedido(),
+                    null // Unidad desconocida
+                )
+            );
+        }
 
         // Si hay más parámetros, los dejamos sin valor para que no se marque como completo prematuramente
         resultadoDTO.setParametros(parametrosMap);
@@ -416,5 +441,20 @@ public class TareaService {
         muestraAnalisisRepository.save(tarea);
 
         logger.info("Tarea {} validada exitosamente", tareaId);
+    }
+
+    /**
+     * Rechaza una tarea
+     */
+    public void rechazarTarea(UUID tareaId) {
+        logger.info("Rechazando tarea: {}", tareaId);
+
+        MuestraAnalisis tarea = muestraAnalisisRepository.findById(tareaId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Tarea no encontrada con ID: " + tareaId));
+
+        tarea.setCumpleNormativa(false);
+        tarea.setEstadoAnalisis(MuestraAnalisis.EstadoAnalisis.CANCELADO);
+        muestraAnalisisRepository.save(tarea);
     }
 }

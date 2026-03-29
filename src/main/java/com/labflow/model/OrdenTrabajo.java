@@ -224,7 +224,9 @@ public class OrdenTrabajo {
      */
     public List<MuestraAnalisis> obtenerMuestrasRechazadas() {
         return tareas.stream()
-                .filter(tarea -> Boolean.FALSE.equals(tarea.getCumpleNormativa()))
+                .filter(tarea -> Boolean.FALSE.equals(tarea.getCumpleNormativa()) ||
+                                 tarea.getEstadoAnalisis() == MuestraAnalisis.EstadoAnalisis.CANCELADO ||
+                                 (tarea.getMuestra() != null && tarea.getMuestra().getEstado() == Muestra.EstadoMuestra.RECHAZADA))
                 .toList();
     }
 
@@ -233,7 +235,9 @@ public class OrdenTrabajo {
      */
     public long contarMuestrasRechazadas() {
         return tareas.stream()
-                .filter(tarea -> Boolean.FALSE.equals(tarea.getCumpleNormativa()))
+                .filter(tarea -> Boolean.FALSE.equals(tarea.getCumpleNormativa()) ||
+                                 tarea.getEstadoAnalisis() == MuestraAnalisis.EstadoAnalisis.CANCELADO ||
+                                 (tarea.getMuestra() != null && tarea.getMuestra().getEstado() == Muestra.EstadoMuestra.RECHAZADA))
                 .count();
     }
 }

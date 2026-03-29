@@ -44,9 +44,21 @@ public class TareaBasicDTO {
     @JsonProperty("prioridad")
     private String prioridad;
 
+    @JsonProperty("valor_medido")
+    private Double valorMedido;
+
+    @JsonProperty("observaciones")
+    private String observaciones;
+
     // Constructores
     public TareaBasicDTO() {
     }
+
+    public Double getValorMedido() { return valorMedido; }
+    public void setValorMedido(Double valorMedido) { this.valorMedido = valorMedido; }
+
+    public String getObservaciones() { return observaciones; }
+    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 
     // Getters and Setters
     public UUID getIdMuestraAnalisis() {

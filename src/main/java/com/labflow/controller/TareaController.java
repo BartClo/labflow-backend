@@ -124,4 +124,22 @@ public class TareaController {
 
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Rechaza una tarea (marcando como no cumple normativa o cancelada)
+     * POST /api/tareas/{id}/rechazar
+     */
+    @PostMapping("/{id}/rechazar")
+    public ResponseEntity<Map<String, String>> rechazarTarea(@PathVariable UUID id) {
+        logger.info("Rechazando tarea: {}", id);
+
+        tareaService.rechazarTarea(id);
+
+        Map<String, String> response = Map.of(
+                "mensaje", "Tarea rechazada exitosamente",
+                "tarea_id", id.toString()
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }

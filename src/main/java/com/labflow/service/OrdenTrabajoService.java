@@ -315,11 +315,13 @@ public class OrdenTrabajoService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Orden de trabajo no encontrada con ID: " + id));
 
-        // Solo se pueden eliminar órdenes en estado ABIERTA o CANCELADA
+        // Solo se pueden eliminar órdenes en estado ABIERTA, CANCELADA o EN_PROCESO
+        // NO se permite eliminar órdenes FINALIZADAS
         if (ordenTrabajo.getEstado() == EstadoOT.FINALIZADA) {
             throw new ValidationException(
                     "No se puede eliminar una orden de trabajo finalizada. " +
-                    "Solo se pueden eliminar órdenes abiertas o canceladas.");
+                    "Una vez completada, la orden debe conservarse para auditoría. " +
+                    "Solo se pueden eliminar órdenes abiertas, en proceso o canceladas.");
         }
 
         // Obtener las tareas asociadas y liberarlas
@@ -351,6 +353,49 @@ public class OrdenTrabajoService {
         dto.setNombreAnalisis(ma.getAnalisis().getNombreAnalisis());
         dto.setEstadoAnalisis(ma.getEstadoAnalisis().name());
         dto.setCumpleNormativa(ma.getCumpleNormativa());
+
+        if (ma.getResultado() != null) {
+            try {
+                // By default the fallback logic maps inside either root or the parameter key
+                if (ma.getResultado().containsKey("valor_medido")) {
+                    Object val = ma.getResultado().get("valor_medido");
+                    if (val instanceof Number) {
+                        dto.setValorMedido(((Number) val).doubleValue());
+                    } else if (val instanceof String) {
+                        dto.setValorMedido(Double.parseDouble((String) val));
+                    }
+                }
+                if (ma.getResultado().containsKey("observaciones")) {
+                    dto.setObservaciones((String) ma.getResultado().get("observaciones"));
+                }
+                
+                // Si el formato es por parametro: {"parametros": {"Hierro": {"valor": 10 ...}}}
+                if (ma.getResultado().containsKey("parametros")) {
+                    java.util.Map<String, Object> parametros = (java.util.Map<String, Object>) ma.getResultado().get("parametros");
+                    if (parametros != null && !parametros.isEmpty()) {
+                        for (Object paramValObj : parametros.values()) {
+                            if (paramValObj instanceof java.util.Map) {
+                                java.util.Map<String, Object> paramVal = (java.util.Map<String, Object>) paramValObj;
+                                // Chequear valor, o retrospectivo valor_medido
+                                Object val = paramVal.get("valor");
+                                if (val == null) {
+                                    val = paramVal.get("valor_medido");
+                                }
+                                if (val != null && dto.getValorMedido() == null) {
+                                    if (val instanceof Number) dto.setValorMedido(((Number) val).doubleValue());
+                                    else if (val instanceof String) dto.setValorMedido(Double.parseDouble((String) val));
+                                }
+                                if (paramVal.containsKey("observaciones") && dto.getObservaciones() == null) {
+                                    dto.setObservaciones((String) paramVal.get("observaciones"));
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                logger.warn("Error parsing resultado for ma {}: {}", ma.getIdMuestraAnalisis(), ex.getMessage());
+            }
+        }
 
         // Incluir prioridad de la muestra
         try {
@@ -386,7 +431,6 @@ public class OrdenTrabajoService {
         return dto;
     }
 
-<<<<<<< HEAD
     /**
      * Obtiene estadísticas del sistema de órdenes de trabajo
      */
@@ -428,7 +472,7 @@ public class OrdenTrabajoService {
             long otUrgentes,
             long otEnProceso
     ) {}
-=======
+
     private OrdenTrabajo.PrioridadOT parsePrioridad(String prioridadRaw) {
         if (prioridadRaw == null || prioridadRaw.isBlank()) {
             return null;
@@ -445,5 +489,4 @@ public class OrdenTrabajoService {
         OrdenTrabajo.PrioridadOT prioridad = parsePrioridad(prioridadRaw);
         return prioridad != null ? prioridad : OrdenTrabajo.PrioridadOT.MEDIA;
     }
->>>>>>> 9b3ab914229399a28558396a282b045248dc1811
 }

@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Schema(description = "DTO para solicitud de inicio de sesión")
 public class LoginRequestDTO {
 
-    @NotBlank(message = "El username es obligatorio")
+    @NotBlank(message = "El email es obligatorio")
     @Schema(description = "Nombre de usuario", example = "juan.perez", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String username;
+    private String email;
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Schema(description = "Contraseña del usuario", example = "Password123!", requiredMode = Schema.RequiredMode.REQUIRED, format = "password")

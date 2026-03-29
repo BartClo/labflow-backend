@@ -59,6 +59,9 @@ public class ResultadoUpdateDTO {
         @JsonProperty("unidad")
         private String unidad;
 
+        @JsonProperty("observaciones")
+        private String observaciones;
+
         public ParametroResultadoDTO() {
         }
 
@@ -81,6 +84,14 @@ public class ResultadoUpdateDTO {
 
         public void setUnidad(String unidad) {
             this.unidad = unidad;
+        }
+
+        public String getObservaciones() {
+            return observaciones;
+        }
+
+        public void setObservaciones(String observaciones) {
+            this.observaciones = observaciones;
         }
     }
 }

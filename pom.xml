@@ -134,6 +134,20 @@
             <artifactId>jasperreports-fonts</artifactId>
             <version>6.20.6</version>
         </dependency>
+
+        <!-- Dotenv for Spring Boot -->
+        <dependency>
+            <groupId>me.paulschwarz</groupId>
+            <artifactId>spring-dotenv</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <!-- Bouncy Castle (Required for Argon2 Password Encoder) -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.78.1</version>
+        </dependency>
     </dependencies>
     
     <build>

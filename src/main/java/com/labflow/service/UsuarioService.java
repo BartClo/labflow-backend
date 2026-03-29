@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class UsuarioService {
     
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Login - Validar credenciales de usuario
@@ -35,7 +37,7 @@ public class UsuarioService {
     @Transactional
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
         // Buscar usuario por username
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(loginRequest.getUsername());
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(loginRequest.getEmail());
         
         if (usuarioOpt.isEmpty()) {
             return LoginResponseDTO.failed("Usuario no encontrado");
@@ -49,7 +51,7 @@ public class UsuarioService {
         }
         
         // Validar contraseña (en texto plano por ahora - NOTA: implementar BCrypt en producción)
-        if (!usuario.getPassword().equals(loginRequest.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
             return LoginResponseDTO.failed("Contraseña incorrecta");
         }
         
@@ -343,3 +345,5 @@ public class UsuarioService {
             long trabajadores
     ) {}
 }
+
+
