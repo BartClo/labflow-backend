@@ -371,10 +371,12 @@ public class OrdenTrabajoService {
                 
                 // Si el formato es por parametro: {"parametros": {"Hierro": {"valor": 10 ...}}}
                 if (ma.getResultado().containsKey("parametros")) {
+                    @SuppressWarnings("unchecked")
                     java.util.Map<String, Object> parametros = (java.util.Map<String, Object>) ma.getResultado().get("parametros");
                     if (parametros != null && !parametros.isEmpty()) {
                         for (Object paramValObj : parametros.values()) {
                             if (paramValObj instanceof java.util.Map) {
+                                @SuppressWarnings("unchecked")
                                 java.util.Map<String, Object> paramVal = (java.util.Map<String, Object>) paramValObj;
                                 // Chequear valor, o retrospectivo valor_medido
                                 Object val = paramVal.get("valor");

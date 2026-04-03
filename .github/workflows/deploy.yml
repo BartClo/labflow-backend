@@ -1,0 +1,87 @@
+name: Deploy Infrastructure
+
+on:
+  repository_dispatch:
+    types: [deploy-backend, deploy-frontend, deploy-all]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to ${{ github.event.inputs.environment || 'production' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
+    permissions:
+      contents: read
+      packages: read
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set environment
+        id: env
+        run: |
+          ENV="${{ github.event.inputs.environment || 'production' }}"
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+          echo "📦 Deploying to: $ENV"
+
+      - name: Deploy with docker-compose
+        env:
+          DOCKER_ENV: ${{ steps.env.outputs.environment }}
+        run: |
+          echo "🐳 Starting docker-compose for $DOCKER_ENV..."
+          if [ ! -f "docker-compose.$DOCKER_ENV.yml" ]; then
+            echo "⚠️  docker-compose.$DOCKER_ENV.yml not found, using docker-compose.yml"
+            docker-compose up -d
+          else
+            docker-compose -f docker-compose.$DOCKER_ENV.yml up -d
+          fi
+
+      - name: Wait for services (up to 5 min)
+        timeout-minutes: 5
+        run: |
+          echo "⏳ Waiting for services..."
+          for i in {1..30}; do
+            if curl -sf http://localhost:8080/actuator/health > /dev/null 2>&1; then
+              echo "✅ Backend is ready!"
+              break
+            fi
+            echo "  Attempt $i/30..."
+            sleep 10
+          done
+
+      - name: Health check
+        run: |
+          echo "🏥 Verifying services..."
+          curl -f http://localhost:8080/actuator/health || exit 1
+          curl -f http://localhost:3000 || exit 1
+          echo "✅ All services healthy"
+
+      - name: Show deployment status
+        if: success()
+        run: |
+          echo "✅ Deployment successful!"
+          echo "Environment: ${{ steps.env.outputs.environment }}"
+          echo "Time: $(date -u)"
+          docker-compose ps
+
+      - name: Show error logs
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          docker-compose logs --tail=50
+
+
